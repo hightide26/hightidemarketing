@@ -76,10 +76,11 @@ body {
   overscroll-behavior: none;
 }
 /* Page-level horizontal overflow guard.
-   body/html can't reliably clip horizontal scroll (body's overflow propagates
-   to the viewport on iOS). A wrapper div is the only safe clip container. */
+   overflow-x: clip is CRITICAL here — it clips horizontal overflow without
+   creating a scroll container. overflow-x: hidden would break position:sticky
+   on the hero section. clip achieves the same visual result, sticky-safe. */
 .page-guard {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
   position: relative;
 }
