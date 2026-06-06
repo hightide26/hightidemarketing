@@ -2734,6 +2734,9 @@ p { color: var(--text-body); line-height: 1.75; }
 
 /* ── 768px: Mobile — hamburger nav kicks in ── */
 @media (max-width: 768px) {
+  /* ── iOS horizontal overflow fix: body alone isn't enough on Safari ── */
+  html { overflow-x: hidden; }
+
   :root { --px: 20px; }
 
   /* Section spacing */
@@ -2766,8 +2769,12 @@ p { color: var(--text-body); line-height: 1.75; }
   }
 
   /* ── HERO (MOBILE ONLY) ── */
-  /* Scroll zone: 200vh so wave video plays fully before next section */
-  .hero-scroll-zone { height: 200vh; }
+  /* iOS Safari fix: 100vh includes browser chrome — 100dvh = actual visible area */
+  .hero { height: 100dvh; }
+
+  /* Scroll zone: 120vh — wave video autoplays on mobile, no GSAP scrub needed.
+     Just enough for the sticky effect before stats section enters. */
+  .hero-scroll-zone { height: 120vh; overflow: hidden; }
 
   /* Hero inner: single column, centered, no overflow clipping */
   .hero-inner {
@@ -2836,7 +2843,8 @@ p { color: var(--text-body); line-height: 1.75; }
     display: flex;
     flex-direction: row;
     overflow-x: auto;
-    overflow-y: visible;
+    /* NOTE: do NOT set overflow-y: visible — invalid when overflow-x is auto,
+       and causes page-level layout overflow in some browsers */
     gap: 14px;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -2923,7 +2931,7 @@ p { color: var(--text-body); line-height: 1.75; }
   .hero-eyebrow { font-size: 10px; }
 
   /* Hero — mobile only, no stat cards */
-  .hero-scroll-zone { height: 200vh; }
+  .hero-scroll-zone { height: 120vh; }
   .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
   .hero-h2 { font-size: clamp(32px, 9.5vw, 46px); }
   .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
@@ -2978,7 +2986,7 @@ p { color: var(--text-body); line-height: 1.75; }
   :root { --px: 14px; }
   .hero-h2 { font-size: 26px; }
   .hero-sub { font-size: 14px; }
-  .hero-scroll-zone { height: 200vh; }
+  .hero-scroll-zone { height: 120vh; }
   .vid-carousel { width: 200px; }
   .vid-arrow--prev { left: -24px; }
   .vid-arrow--next { right: -24px; }

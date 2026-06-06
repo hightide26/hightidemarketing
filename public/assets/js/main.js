@@ -414,34 +414,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    /* ── Hero video: scroll-driven currentTime (scrubbing) ── */
+    /* ── Hero video: scroll-driven on desktop, autoplay on mobile ── */
     const heroVideo = document.querySelector('.hero-bg-video');
     const heroSection = document.querySelector('.hero');
+    const isMobile = window.innerWidth <= 768;
 
     if (heroVideo && heroSection) {
-      // Once metadata loads we know the duration
-      const driveVideo = () => {
-        const duration = heroVideo.duration;
-        if (!duration) return;
-
-        // Use the tall .hero-scroll-zone as trigger — hero is CSS sticky,
-        // so no GSAP pin needed. Zero artifacts on reverse scroll.
-        const heroScrollZone = document.querySelector('.hero-scroll-zone');
-        ScrollTrigger.create({
-          trigger: heroScrollZone || heroSection,
-          start: 'top top',
-          end: 'bottom top',    // video plays through as the 250vh zone exits
-          scrub: 2,             // 2s lag = silky cinematic feel
-          onUpdate: (self) => {
-            heroVideo.currentTime = self.progress * duration;
-          }
-        });
-      };
-
-      if (heroVideo.readyState >= 1) {
-        driveVideo();
+      if (isMobile) {
+        // Mobile: iOS ignores preload="auto" so the video never loads for scrubbing.
+        // Instead, just autoplay it — smooth wave loop, zero GSAP complexity.
+        heroVideo.loop = true;
+        heroVideo.play().catch(() => {});
       } else {
-        heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
+        // Desktop: scroll-driven currentTime via GSAP ScrollTrigger
+        const driveVideo = () => {
+          const duration = heroVideo.duration;
+          if (!duration) return;
+
+          // Use the tall .hero-scroll-zone as trigger — hero is CSS sticky,
+          // so no GSAP pin needed. Zero artifacts on reverse scroll.
+          const heroScrollZone = document.querySelector('.hero-scroll-zone');
+          ScrollTrigger.create({
+            trigger: heroScrollZone || heroSection,
+            start: 'top top',
+            end: 'bottom top',    // video plays through as the zone exits
+            scrub: 2,             // 2s lag = silky cinematic feel
+            onUpdate: (self) => {
+              heroVideo.currentTime = self.progress * duration;
+            }
+          });
+        };
+
+        if (heroVideo.readyState >= 1) {
+          driveVideo();
+        } else {
+          heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
+        }
+
+        // Refresh after fonts/images load to fix any layout-shift measurement errors
+        window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
       }
     }
 
