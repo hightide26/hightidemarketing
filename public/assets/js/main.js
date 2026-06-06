@@ -4,6 +4,31 @@
    FAQ Accordion · GSAP Animations
 ═══════════════════════════════════════════════════ */
 
+/* ── MOBILE VIEWPORT HEIGHT LOCK ──
+   Captures the real viewport height once at load and writes it to --vh.
+   We deliberately do NOT update on resize — that's what causes the jump
+   when iOS Chrome collapses its tab bar. The hero height stays constant. */
+(function lockVH() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', vh + 'px');
+})();
+
+/* ── MOBILE VIDEO KILL ──
+   Prevent the hero video from loading at all on mobile.
+   It's a large HD file — loading it over cellular makes the page feel
+   very slow. We show solid navy instead and skip the GSAP scrub. */
+const IS_MOBILE = window.innerWidth <= 768;
+if (IS_MOBILE) {
+  const heroVid = document.querySelector('.hero-bg-video');
+  if (heroVid) {
+    heroVid.removeAttribute('preload');
+    heroVid.setAttribute('preload', 'none');
+    // Remove <source> so the browser doesn't queue the network request
+    heroVid.querySelectorAll('source').forEach(s => s.remove());
+    heroVid.load(); // flush any in-progress load
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ── NAV SCROLL STATE ── */
@@ -414,38 +439,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    /* ── Hero video: scroll-driven on all screen sizes ── */
-    const heroVideo = document.querySelector('.hero-bg-video');
-    const heroSection = document.querySelector('.hero');
-    const isMobile = window.innerWidth <= 768;
+    /* ── Hero video: scroll-driven on desktop only ── */
+    // Mobile: video is not loaded (preload stripped in the head script above),
+    // so there is nothing to scrub. Desktop gets the full cinematic scroll effect.
+    if (!IS_MOBILE) {
+      const heroVideo = document.querySelector('.hero-bg-video');
+      const heroSection = document.querySelector('.hero');
 
-    if (heroVideo && heroSection) {
-      const driveVideo = () => {
-        const duration = heroVideo.duration;
-        if (!duration) return;
+      if (heroVideo && heroSection) {
+        const driveVideo = () => {
+          const duration = heroVideo.duration;
+          if (!duration) return;
 
-        const heroScrollZone = document.querySelector('.hero-scroll-zone');
-        ScrollTrigger.create({
-          trigger: heroScrollZone || heroSection,
-          start: 'top top',
-          end: 'bottom top',
-          // Mobile touch is snappier than mouse wheel — tighter scrub so
-          // waves visibly respond to each swipe gesture.
-          scrub: isMobile ? 0.8 : 2,
-          onUpdate: (self) => {
-            heroVideo.currentTime = self.progress * duration;
-          }
-        });
-      };
+          const heroScrollZone = document.querySelector('.hero-scroll-zone');
+          ScrollTrigger.create({
+            trigger: heroScrollZone || heroSection,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 2,
+            onUpdate: (self) => {
+              heroVideo.currentTime = self.progress * duration;
+            }
+          });
+        };
 
-      if (heroVideo.readyState >= 1) {
-        driveVideo();
-      } else {
-        heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
+        if (heroVideo.readyState >= 1) {
+          driveVideo();
+        } else {
+          heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
+        }
+
+        window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
       }
-
-      // Refresh after fonts/images settle to fix layout-shift measurement errors
-      window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
     }
 
     /* Hero content stays visible while pinned — no fade needed */

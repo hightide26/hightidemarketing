@@ -2776,13 +2776,16 @@ p { color: var(--text-body); line-height: 1.75; }
   }
 
   /* ── HERO (MOBILE ONLY) ── */
-  /* Use 100svh (small viewport height) — this is the height with ALL browser
-     chrome visible. It never changes as Chrome's tab bar collapses, so there
-     is zero layout reflow/jump when the user starts scrolling. */
-  .hero { height: 100svh; }
+  /* Lock hero height to the viewport size captured at page load (--vh is set
+     once in JS and never updated on resize). This prevents the jump that
+     happens when iOS Chrome collapses its tab bar mid-scroll. */
+  .hero { height: calc(var(--vh, 1svh) * 100); }
 
-  /* Scroll zone: 150vh gives the wave video room to play through on scroll
-     before the stats section enters. No overflow:hidden — breaks sticky. */
+  /* Hide the video and its wrapper on mobile — the video is a large HD file
+     that kills load time on cellular. Solid navy background shows instead. */
+  .hero-bg-wrap { display: none; }
+
+  /* Scroll zone height matches locked hero. No overflow:hidden — breaks sticky. */
   .hero-scroll-zone { height: 150vh; }
 
   /* Hero inner: single column, centered, no overflow clipping */
