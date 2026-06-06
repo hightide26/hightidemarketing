@@ -414,44 +414,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    /* ── Hero video: scroll-driven on desktop, autoplay on mobile ── */
+    /* ── Hero video: scroll-driven on all screen sizes ── */
     const heroVideo = document.querySelector('.hero-bg-video');
     const heroSection = document.querySelector('.hero');
     const isMobile = window.innerWidth <= 768;
 
     if (heroVideo && heroSection) {
-      if (isMobile) {
-        // Mobile: video is hidden via CSS (solid navy background instead).
-        // Nothing to do here.
+      const driveVideo = () => {
+        const duration = heroVideo.duration;
+        if (!duration) return;
+
+        const heroScrollZone = document.querySelector('.hero-scroll-zone');
+        ScrollTrigger.create({
+          trigger: heroScrollZone || heroSection,
+          start: 'top top',
+          end: 'bottom top',
+          // Mobile touch is snappier than mouse wheel — tighter scrub so
+          // waves visibly respond to each swipe gesture.
+          scrub: isMobile ? 0.8 : 2,
+          onUpdate: (self) => {
+            heroVideo.currentTime = self.progress * duration;
+          }
+        });
+      };
+
+      if (heroVideo.readyState >= 1) {
+        driveVideo();
       } else {
-        // Desktop: scroll-driven currentTime via GSAP ScrollTrigger
-        const driveVideo = () => {
-          const duration = heroVideo.duration;
-          if (!duration) return;
-
-          // Use the tall .hero-scroll-zone as trigger — hero is CSS sticky,
-          // so no GSAP pin needed. Zero artifacts on reverse scroll.
-          const heroScrollZone = document.querySelector('.hero-scroll-zone');
-          ScrollTrigger.create({
-            trigger: heroScrollZone || heroSection,
-            start: 'top top',
-            end: 'bottom top',    // video plays through as the zone exits
-            scrub: 2,             // 2s lag = silky cinematic feel
-            onUpdate: (self) => {
-              heroVideo.currentTime = self.progress * duration;
-            }
-          });
-        };
-
-        if (heroVideo.readyState >= 1) {
-          driveVideo();
-        } else {
-          heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
-        }
-
-        // Refresh after fonts/images load to fix any layout-shift measurement errors
-        window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+        heroVideo.addEventListener('loadedmetadata', driveVideo, { once: true });
       }
+
+      // Refresh after fonts/images settle to fix layout-shift measurement errors
+      window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
     }
 
     /* Hero content stays visible while pinned — no fade needed */

@@ -2776,13 +2776,14 @@ p { color: var(--text-body); line-height: 1.75; }
   }
 
   /* ── HERO (MOBILE ONLY) ── */
-  /* iOS Safari fix: 100vh includes browser chrome — 100dvh = actual visible area */
-  .hero { height: 100dvh; }
+  /* Use 100svh (small viewport height) — this is the height with ALL browser
+     chrome visible. It never changes as Chrome's tab bar collapses, so there
+     is zero layout reflow/jump when the user starts scrolling. */
+  .hero { height: 100svh; }
 
-  /* Scroll zone: 120vh — wave video autoplays on mobile, no GSAP scrub needed.
-     Just enough for the sticky effect before stats section enters.
-     NOTE: do NOT add overflow:hidden here — it breaks position:sticky on .hero */
-  .hero-scroll-zone { height: 120vh; }
+  /* Scroll zone: 150vh gives the wave video room to play through on scroll
+     before the stats section enters. No overflow:hidden — breaks sticky. */
+  .hero-scroll-zone { height: 150vh; }
 
   /* Hero inner: single column, centered, no overflow clipping */
   .hero-inner {
@@ -2815,9 +2816,6 @@ p { color: var(--text-body); line-height: 1.75; }
 
   /* Subheadline — bold so it reads against the video */
   .hero-sub { font-weight: 700; }
-
-  /* Remove video on mobile — solid dark navy background instead */
-  .hero-bg-wrap { display: none; }
 
   /* Remove stat card bubbles from hero on mobile entirely */
   .hero-visual { display: none; }
@@ -2945,7 +2943,7 @@ p { color: var(--text-body); line-height: 1.75; }
   .hero-eyebrow { font-size: 10px; }
 
   /* Hero — mobile only, no stat cards */
-  .hero-scroll-zone { height: 120vh; }
+  .hero-scroll-zone { height: 150vh; }
   .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
   .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
 
@@ -2999,7 +2997,7 @@ p { color: var(--text-body); line-height: 1.75; }
   :root { --px: 14px; }
   .hero-h2 { font-size: clamp(36px, 10.5vw, 48px); line-height: 1.05; }
   .hero-sub { font-size: 14px; font-weight: 700; }
-  .hero-scroll-zone { height: 120vh; }
+  .hero-scroll-zone { height: 150vh; }
   .vid-carousel { width: 200px; }
   .vid-arrow--prev { left: -24px; }
   .vid-arrow--next { right: -24px; }
