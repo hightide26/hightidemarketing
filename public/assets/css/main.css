@@ -463,7 +463,6 @@ p { color: var(--text-body); line-height: 1.75; }
   gap: 64px;
   align-items: center;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* Eyebrow */
@@ -1679,8 +1678,8 @@ p { color: var(--text-body); line-height: 1.75; }
    STATS BANNER — navy strip after hero
 ══════════════════════════════════════════ */
 .stats-banner {
-  background: var(--navy);
-  border-top: 2px solid rgba(91,196,232,0.18);
+  background: #0a2d40;
+  border-top: 3px solid var(--gold);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .stats-banner-inner {
@@ -2766,51 +2765,53 @@ p { color: var(--text-body); line-height: 1.75; }
     padding: 14px 32px;
   }
 
-  /* ── HERO ── */
-  /* Kill dead scroll gap — just enough zone to animate the wave */
-  .hero-scroll-zone { height: 108vh; overflow-x: hidden; }
-  .hero { overflow: hidden; }
+  /* ── HERO (MOBILE ONLY) ── */
+  /* Scroll zone: 200vh so wave video plays fully before next section */
+  .hero-scroll-zone { height: 200vh; }
 
-  /* Restore top clearance + center everything on mobile */
+  /* Hero inner: single column, centered, no overflow clipping */
   .hero-inner {
     grid-template-columns: 1fr;
     padding-top: calc(var(--nav-h) + 24px);
     padding-left: var(--px);
     padding-right: var(--px);
-    padding-bottom: 72px;
+    padding-bottom: 80px;
     align-items: center;
     justify-items: center;
     width: 100%;
     box-sizing: border-box;
+    overflow: visible;
+    gap: 0;
   }
-  /* Center hero text content */
-  .hero-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
+  /* Center all hero text */
+  .hero-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
   .hero-eyebrow { justify-content: center; }
   .hero-sub { text-align: center; max-width: 100%; }
   .hero-ctas { justify-content: center; }
 
   /* Headline — bigger on mobile */
-  .hero-h2 { font-size: clamp(36px, 9.5vw, 52px); }
+  .hero-h2 { font-size: clamp(38px, 10vw, 54px); }
 
-  /* Stat cards: 2-up on mobile */
-  .hero-visual { grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-  /* Hide 3rd stat card to keep hero tight */
-  .hero-visual .hc-stat:nth-child(3) { display: none; }
+  /* Remove stat card bubbles from hero on mobile entirely */
+  .hero-visual { display: none; }
 
-  /* Watermark — 90% width coverage */
+  /* Watermark — spans ~90% of screen width */
   .hero-watermark {
-    font-size: clamp(44px, 11.5vw, 120px);
-    bottom: 12px;
-    color: rgba(255,255,255,0.20);
+    font-size: clamp(44px, 12vw, 120px);
+    bottom: 16px;
+    color: rgba(255,255,255,0.22);
     letter-spacing: -0.03em;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    transform: none;
   }
-
-  /* Stat cards compact */
-  .hc-stat { padding: 14px 14px; gap: 10px; }
-  .hc-stat-icon { width: 36px; height: 36px; flex-shrink: 0; }
-  .hc-stat-val { font-size: 18px; }
-  .hc-stat-label { font-size: 11px; }
-  .hc-stat-sub { display: none; }
 
   /* ── TYPOGRAPHY — section headings bigger on mobile ── */
   h2 { font-size: clamp(26px, 6.5vw, 38px); }
@@ -2921,11 +2922,11 @@ p { color: var(--text-body); line-height: 1.75; }
   .hero-sub { font-size: 15px; }
   .hero-eyebrow { font-size: 10px; }
 
-  /* Hero */
-  .hero-scroll-zone { height: 106vh; overflow-x: hidden; }
+  /* Hero — mobile only, no stat cards */
+  .hero-scroll-zone { height: 200vh; }
   .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
-  .hero-h2 { font-size: clamp(30px, 9vw, 44px); }
-  .hero-watermark { font-size: clamp(36px, 10.5vw, 80px); bottom: 10px; }
+  .hero-h2 { font-size: clamp(32px, 9.5vw, 46px); }
+  .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
 
   /* Stat cards: single column */
   .hero-visual { grid-template-columns: 1fr; }
@@ -2977,7 +2978,7 @@ p { color: var(--text-body); line-height: 1.75; }
   :root { --px: 14px; }
   .hero-h2 { font-size: 26px; }
   .hero-sub { font-size: 14px; }
-  .hero-scroll-zone { height: 105vh; }
+  .hero-scroll-zone { height: 200vh; }
   .vid-carousel { width: 200px; }
   .vid-arrow--prev { left: -24px; }
   .vid-arrow--next { right: -24px; }
