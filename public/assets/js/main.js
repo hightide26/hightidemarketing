@@ -277,6 +277,81 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* ── METHOD CARD DECK — mobile swipe (tiered stack) ── */
+  if (IS_MOBILE) {
+    const methodGrid = document.querySelector('.method-grid');
+    if (methodGrid) {
+      const cards = Array.from(methodGrid.querySelectorAll('.method-card'));
+      const n = cards.length;
+      let current = 0;
+      let busy = false;
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      /* Assign data-deck positions to all cards */
+      function applyDeck(skipCard) {
+        cards.forEach((card, i) => {
+          if (card === skipCard) return; // let exit animation finish
+          const pos = (i - current + n) % n;
+          card.dataset.deck = pos === 0 ? '0'
+                            : pos === 1 ? '1'
+                            : pos === 2 ? '2'
+                            : 'back';
+        });
+      }
+
+      /* Swipe left → advance to next card */
+      function advance() {
+        if (busy) return;
+        busy = true;
+
+        const exitCard = cards[current];
+        exitCard.dataset.deck = 'exit'; // fly off left
+
+        // Immediately reposition the rest of the deck
+        current = (current + 1) % n;
+        applyDeck(exitCard);
+
+        // After exit animation finishes, silently snap exit card to back
+        setTimeout(() => {
+          exitCard.style.transition = 'none';
+          exitCard.dataset.deck = 'back';
+          void exitCard.getBoundingClientRect(); // force reflow
+          exitCard.style.transition = '';
+          busy = false;
+        }, 420);
+      }
+
+      /* Swipe right → go back one card */
+      function retreat() {
+        if (busy) return;
+        busy = true;
+        current = (current - 1 + n) % n;
+        applyDeck();
+        busy = false;
+      }
+
+      /* Initialise */
+      applyDeck();
+
+      /* Touch events — horizontal swipe only */
+      methodGrid.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      methodGrid.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        // Only fire on clear horizontal swipes, not vertical scrolls
+        if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          if (dx < 0) advance();
+          else retreat();
+        }
+      }, { passive: true });
+    }
+  }
+
   /* ── GSAP + ScrollTrigger animations ── */
   function initGSAP() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;

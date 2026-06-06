@@ -2873,27 +2873,89 @@ p { color: var(--text-body); line-height: 1.75; }
   .stats-banner-inner { grid-template-columns: 1fr 1fr; gap: 24px 16px; padding: 40px var(--px); }
   .stats-banner-item::after { display: none !important; }
 
-  /* ── METHOD CARDS — horizontal scroll on mobile ── */
+  /* ── METHOD CARDS — stacked deck swipe on mobile ── */
   .method-grid {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    /* NOTE: do NOT set overflow-y: visible — invalid when overflow-x is auto,
-       and causes page-level layout overflow in some browsers */
-    gap: 14px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 16px;
-    /* hide scrollbar but keep scroll */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    display: block;           /* override flex */
+    position: relative;
+    height: 310px;            /* room for tallest card + stacking peek */
+    overflow: visible;        /* let offset cards show behind */
+    scroll-snap-type: none;
+    -webkit-overflow-scrolling: auto;
+    padding-bottom: 40px;     /* space below for offset cards + swipe hint */
+    gap: 0;
+    scrollbar-width: auto;
+    -ms-overflow-style: auto;
+    margin-bottom: 8px;
   }
-  .method-grid::-webkit-scrollbar { display: none; }
+  /* Swipe hint under the deck */
+  .method-grid::after {
+    content: 'swipe to browse';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+    pointer-events: none;
+  }
   .method-card {
-    min-width: 220px;
-    max-width: 220px;
-    flex-shrink: 0;
-    scroll-snap-align: start;
+    position: absolute !important;
+    top: 0; left: 0;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex-shrink: 1;
+    scroll-snap-align: none !important;
+    /* Smooth spring transition for deck repositioning */
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.2, 0.64, 1),
+      opacity 0.38s ease,
+      box-shadow 0.3s ease;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    will-change: transform, opacity;
+  }
+  .method-card:active { cursor: grabbing; }
+
+  /* ── Deck positions (set via data-deck by JS) ── */
+  /* Active / top card */
+  .method-card[data-deck="0"] {
+    transform: none;
+    z-index: 10;
+    opacity: 1;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  }
+  /* 2nd card — peeking right+down */
+  .method-card[data-deck="1"] {
+    transform: translate(12px, 10px) scale(0.96);
+    z-index: 9;
+    opacity: 1;
+  }
+  /* 3rd card */
+  .method-card[data-deck="2"] {
+    transform: translate(24px, 20px) scale(0.92);
+    z-index: 8;
+    opacity: 0.85;
+  }
+  /* All remaining cards hidden behind the 3rd */
+  .method-card[data-deck="back"] {
+    transform: translate(32px, 28px) scale(0.88);
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Exit animation: card flies off to the left */
+  .method-card[data-deck="exit"] {
+    transform: translateX(-108%) rotate(-8deg) !important;
+    opacity: 0 !important;
+    z-index: 20;
+    pointer-events: none;
+    transition: transform 0.38s ease-in, opacity 0.3s ease-in !important;
   }
 
   /* ── PROCESS ── */
