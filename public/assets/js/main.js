@@ -421,10 +421,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (heroVideo && heroSection) {
       if (isMobile) {
-        // Mobile: iOS ignores preload="auto" so the video never loads for scrubbing.
-        // Instead, just autoplay it — smooth wave loop, zero GSAP complexity.
-        heroVideo.loop = true;
-        heroVideo.play().catch(() => {});
+        // Mobile: video is hidden via CSS (solid navy background instead).
+        // Nothing to do here.
       } else {
         // Desktop: scroll-driven currentTime via GSAP ScrollTrigger
         const driveVideo = () => {

@@ -2816,6 +2816,9 @@ p { color: var(--text-body); line-height: 1.75; }
   /* Subheadline — bold so it reads against the video */
   .hero-sub { font-weight: 700; }
 
+  /* Remove video on mobile — solid dark navy background instead */
+  .hero-bg-wrap { display: none; }
+
   /* Remove stat card bubbles from hero on mobile entirely */
   .hero-visual { display: none; }
 
