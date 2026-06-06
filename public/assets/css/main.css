@@ -2783,10 +2783,30 @@ p { color: var(--text-body); line-height: 1.75; }
 
   /* Hide the video and its wrapper on mobile — the video is a large HD file
      that kills load time on cellular. Solid navy background shows instead. */
+  /* Hide the video, replace with a radial gradient + subtle grid texture */
   .hero-bg-wrap { display: none; }
 
-  /* Scroll zone height matches locked hero. No overflow:hidden — breaks sticky. */
-  .hero-scroll-zone { height: 150vh; }
+  .hero {
+    /* Deep navy centre glow fading to the darkest edge */
+    background: radial-gradient(ellipse 110% 85% at 50% 42%,
+      #0e4d72 0%,
+      #091f2e 65%,
+      var(--navy-deep) 100%);
+  }
+
+  /* Repurpose the overlay (no video underneath) as a fine grid texture
+     + a gentle bottom-fade to keep text readable */
+  .hero-overlay {
+    background:
+      linear-gradient(rgba(93,188,229,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(93,188,229,.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(7,31,43,.05) 0%, rgba(7,31,43,.65) 100%);
+    background-size: 42px 42px, 42px 42px, 100% 100%;
+  }
+
+  /* Scroll zone = exact hero height → no pause/gap before stats section.
+     --vh is locked at load so this matches the hero perfectly. */
+  .hero-scroll-zone { height: calc(var(--vh, 1svh) * 100); }
 
   /* Hero inner: single column, centered, no overflow clipping */
   .hero-inner {
@@ -2945,8 +2965,8 @@ p { color: var(--text-body); line-height: 1.75; }
   .hero-sub { font-size: 15px; font-weight: 700; }
   .hero-eyebrow { font-size: 10px; }
 
-  /* Hero — mobile only, no stat cards */
-  .hero-scroll-zone { height: 150vh; }
+  /* Hero — mobile only */
+  .hero-scroll-zone { height: calc(var(--vh, 1svh) * 100); }
   .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
   .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
 
@@ -3000,7 +3020,7 @@ p { color: var(--text-body); line-height: 1.75; }
   :root { --px: 14px; }
   .hero-h2 { font-size: clamp(36px, 10.5vw, 48px); line-height: 1.05; }
   .hero-sub { font-size: 14px; font-weight: 700; }
-  .hero-scroll-zone { height: 150vh; }
+  .hero-scroll-zone { height: calc(var(--vh, 1svh) * 100); }
   .vid-carousel { width: 200px; }
   .vid-arrow--prev { left: -24px; }
   .vid-arrow--next { right: -24px; }
