@@ -15,6 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── MOBILE MENU ── */
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
+  const mobileClose = document.getElementById('mobile-close');
+
+  function closeMenu() {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
 
   hamburger.addEventListener('click', () => {
     const isOpen = mobileMenu.classList.toggle('open');
@@ -24,14 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
   });
 
+  if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+
   mobileMenu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      mobileMenu.classList.remove('open');
-      hamburger.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-      mobileMenu.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    });
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Close menu on Escape key */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
   });
 
   /* ── SCROLL REVEAL (CSS-driven via IntersectionObserver) ── */

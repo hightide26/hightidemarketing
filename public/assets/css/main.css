@@ -350,8 +350,8 @@ p { color: var(--text-body); line-height: 1.75; }
 .mobile-menu {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: #fff;
-  z-index: 99;
+  background: var(--navy-deep);
+  z-index: 200;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -361,6 +361,23 @@ p { color: var(--text-body); line-height: 1.75; }
   transition: transform 0.4s var(--ease-out);
 }
 .mobile-menu.open { transform: translateX(0); }
+.mobile-menu-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7);
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.mobile-menu-close:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
 .mobile-nav {
   display: flex;
   flex-direction: column;
@@ -371,10 +388,10 @@ p { color: var(--text-body); line-height: 1.75; }
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: rgba(255,255,255,0.85);
   transition: color 0.2s;
 }
-.mobile-nav a:hover { color: var(--sky-dark); }
+.mobile-nav a:hover { color: #fff; }
 
 /* ══════════════════════════════════════════
    HERO — Cinematic Video Background
@@ -2638,33 +2655,38 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — Full breakpoint system
+   1024px → tablet landscape
+   900px  → tablet portrait / service rows
+   768px  → mobile (hamburger kicks in)
+   480px  → small phones
+   375px  → iPhone SE / smallest common
 ══════════════════════════════════════════ */
-@media (max-width: 900px) {
-  .svc-row-inner {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    direction: ltr !important;
-  }
-  .svc-row--flip .svc-row-inner { direction: ltr; }
-  .svc-media-box { aspect-ratio: 16 / 9; }
-  .svc-animate-text,
-  .svc-row--flip .svc-animate-text { transform: translateY(30px); }
-  .svc-animate-visual,
-  .svc-row--flip .svc-animate-visual { transform: translateY(30px) scale(0.96); }
-}
 
+/* ── 1024px: Tablet landscape ── */
 @media (max-width: 1024px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-  .hero-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  /* Hero: collapse to single column */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-bottom: 100px;
+    align-items: flex-start;
+  }
+  /* Stat cards: horizontal 3-up row */
+  .hero-visual {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
   .hero-watermark { font-size: clamp(40px, 7vw, 100px); }
   .hc-dark { grid-column: span 2; }
+
+  /* Grids */
   .pain-inner { grid-template-columns: 1fr; gap: 40px; }
   .proof-grid { grid-template-columns: repeat(2, 1fr); }
   .work-grid { grid-template-columns: repeat(2, 1fr); }
   .svc-grid { grid-template-columns: repeat(2, 1fr); }
   .diff-grid { grid-template-columns: 1fr 1fr; }
-  .final-cta-form { max-width: 100%; }
   .diff-card-featured { grid-column: span 2; }
   .testi-grid { grid-template-columns: repeat(2, 1fr); }
   .faq-layout { grid-template-columns: 1fr; gap: 40px; }
@@ -2678,56 +2700,222 @@ p { color: var(--text-body); line-height: 1.75; }
   .method-grid { grid-template-columns: repeat(2, 1fr); }
   .whyhtm-layout { grid-template-columns: 1fr; gap: 40px; }
   .whyhtm-photo { aspect-ratio: 16/10; max-width: 560px; margin: 0 auto; }
+  .final-cta-form { max-width: 100%; }
+
+  /* Service rows: drop 100vh constraint on tablet */
+  .svc-row { min-height: auto; }
+  .svc-row-inner { padding: 80px var(--px); }
 }
 
+/* ── 900px: Service rows collapse to single column ── */
+@media (max-width: 900px) {
+  .svc-row { min-height: auto; }
+  .svc-row-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    direction: ltr !important;
+    padding: 64px var(--px);
+  }
+  .svc-row--flip .svc-row-inner { direction: ltr; }
+  .svc-media-box { aspect-ratio: 16 / 9; }
+  .svc-animate-text,
+  .svc-row--flip .svc-animate-text { transform: translateY(30px); }
+  .svc-animate-visual,
+  .svc-row--flip .svc-animate-visual { transform: translateY(30px) scale(0.96); }
+}
+
+/* ── 768px: Mobile — hamburger nav kicks in ── */
 @media (max-width: 768px) {
-  :root { --px: 24px; }
-  .section-inner { padding: 72px var(--px); }
+  :root { --px: 20px; }
+
+  /* Section spacing */
+  .section-inner { padding: 64px var(--px); }
+  .process .section-inner { padding: 64px var(--px) 72px; }
+
+  /* Topbar: collapse to just CTA */
+  .topbar { padding: 7px var(--px); }
   .topbar-sep, .topbar-link:not(.topbar-cta) { display: none; }
   .topbar-inner { justify-content: center; }
   .topbar-cta { margin-left: 0; }
+
+  /* Nav: hide links, show hamburger */
   .nav-links, .nav-cta { display: none; }
   .nav-hamburger { display: flex; }
-  .hero-inner { padding: 0 var(--px); }
-  .hero-visual { grid-template-columns: 1fr; gap: 10px; }
-  .hero-watermark { font-size: 48px; }
+
+  /* ── MOBILE MENU: dark/branded ── */
+  .mobile-menu {
+    background: var(--navy-deep);
+  }
+  .mobile-nav a {
+    font-size: 24px;
+    color: rgba(255,255,255,0.85);
+  }
+  .mobile-nav a:hover { color: #fff; }
+  /* CTA button in mobile menu */
+  .mobile-menu .btn-gold {
+    font-size: 15px;
+    padding: 14px 32px;
+  }
+
+  /* ── HERO ── */
+  /* Critical fix: restore top clearance for fixed nav */
+  .hero-inner {
+    padding-top: calc(var(--nav-h) + 20px);
+    padding-left: var(--px);
+    padding-right: var(--px);
+    padding-bottom: 72px;
+    align-items: flex-start;
+  }
+  /* Stat cards: 2-up grid on mobile */
+  .hero-visual {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  /* Hide 3rd stat card on mobile — keeps hero tight */
+  .hero-visual .hc-stat:nth-child(3) { display: none; }
+  /* Watermark */
+  .hero-watermark { font-size: 38px; bottom: 20px; }
+  /* Hero scroll zone: shorter on mobile for less dead-scroll */
+  .hero-scroll-zone { height: 200vh; }
+
+  /* Stat cards smaller on mobile */
+  .hc-stat { padding: 14px 16px; gap: 12px; }
+  .hc-stat-val { font-size: 20px; }
+  .hc-stat-label { font-size: 11px; }
+  .hc-stat-sub { display: none; }
+
+  /* ── GRIDS ── */
   .hc-dark { grid-column: span 2; }
   .proof-grid { grid-template-columns: 1fr 1fr; }
   .work-grid { grid-template-columns: 1fr; }
   .svc-grid { grid-template-columns: 1fr; }
-  .process-spine { display: none; }
-  .process-cards { grid-template-columns: 1fr; gap: 20px; }
-  .process-card { opacity: 1 !important; transform: none !important; }
   .diff-grid { grid-template-columns: 1fr; }
   .diff-card-featured { grid-column: span 1; flex-direction: column; }
   .testi-grid { grid-template-columns: 1fr; }
-  .testi-featured { padding: 32px 24px; }
-  .testi-featured > p { font-size: 16px; }
-  .testi-featured-footer { flex-wrap: wrap; }
-  .testi-metric { border-left: none; margin-left: 0; text-align: left; padding-left: 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; }
+  .wwd-grid { grid-template-columns: 1fr 1fr; }
+  .method-grid { grid-template-columns: 1fr 1fr; }
+  .stage-grid { grid-template-columns: 1fr; gap: 20px; }
+  .stage-grid::before { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-brand { grid-column: span 2; }
+  .stats-banner-inner { grid-template-columns: 1fr 1fr; gap: 24px 16px; padding: 40px var(--px); }
+  .stats-banner-item::after { display: none !important; }
+
+  /* ── PROCESS ── */
+  .process-spine { display: none; }
+  .process-cards { grid-template-columns: 1fr; gap: 16px; }
+  .process-card { opacity: 1 !important; transform: none !important; padding: 28px 24px 32px; }
+  .process-track { margin-top: 40px; }
+
+  /* ── PAIN ── */
   .pain-cols { grid-template-columns: 1fr; }
   .pain-col-before { border-right: none; border-bottom: 1px solid var(--border); }
-  .footer-grid { grid-template-columns: 1fr; }
-  .footer-brand { grid-column: span 1; }
-  .stats-banner-inner { grid-template-columns: 1fr 1fr; }
-  .stats-banner-item::after { display: none !important; }
+
+  /* ── TESTIMONIALS ── */
+  .testi-featured { padding: 32px 24px; }
+  .testi-featured > p { font-size: 15px; }
+  .testi-featured-footer { flex-wrap: wrap; }
+  .testi-metric { border-left: none; margin-left: 0; text-align: left; padding-left: 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; }
+
+  /* ── EFFICIENCY TABLE ── */
+  .eff-stats { grid-template-columns: 1fr 1fr; }
+  .eff-table-head, .eff-row { grid-template-columns: 1fr; gap: 6px; padding: 18px 20px; }
+  .eff-table-head > div:nth-child(2), .eff-table-head > div:nth-child(3) { display: none; }
+
+  /* ── RADAR ── */
+  .radar-step { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+
+  /* ── VIDEO CAROUSEL: tighter arrows on mobile ── */
+  .vid-arrow--prev { left: -32px; }
+  .vid-arrow--next { right: -32px; }
+  /* Larger touch targets */
+  .vid-arrow { width: 40px; height: 40px; }
+
+  /* ── SERVICE rows ── */
+  .svc-row { min-height: auto; }
+  .svc-row-inner { padding: 56px var(--px); gap: 36px; }
+
+  /* ── FAQ ── */
+  .faq-left h2 { font-size: clamp(24px, 6vw, 36px); }
+
+  /* ── FOOTER ── */
+  .footer-inner { padding: 52px var(--px) 0; }
+  .footer-wordmark { font-size: clamp(28px, 9vw, 80px); }
+}
+
+/* ── 480px: Small phones ── */
+@media (max-width: 480px) {
+  :root { --px: 16px; }
+
+  /* Typography */
+  h2 { font-size: clamp(22px, 7vw, 30px); }
+  .hero-h2 { font-size: clamp(28px, 8vw, 36px); line-height: 1.1; }
+  .hero-sub { font-size: 15px; }
+  .hero-eyebrow { font-size: 10px; }
+
+  /* Hero */
+  .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 56px; }
+  .hero-watermark { font-size: 26px; bottom: 14px; letter-spacing: -0.01em; }
+  .hero-scroll-zone { height: 180vh; }
+
+  /* Stat cards: single column, no 3rd */
+  .hero-visual { grid-template-columns: 1fr; }
+  .hero-visual .hc-stat:nth-child(3) { display: none; }
+  .hc-stat { padding: 14px 16px; }
+
+  /* Grids: single column */
   .wwd-grid { grid-template-columns: 1fr; }
   .method-grid { grid-template-columns: 1fr; }
   .eff-stats { grid-template-columns: 1fr; }
-  .eff-table-head, .eff-row { grid-template-columns: 1fr; gap: 6px; padding: 18px 20px; }
-  .eff-table-head > div:nth-child(2), .eff-table-head > div:nth-child(3) { display: none; }
-  .stage-grid { grid-template-columns: 1fr; gap: 24px; }
-  .stage-grid::before { display: none; }
-  .radar-step { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
-}
+  .proof-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-brand { grid-column: span 1; }
+  .stats-banner-inner { gap: 18px 12px; padding: 32px var(--px); }
+  .stats-banner-val { font-size: 24px; }
 
-@media (max-width: 480px) {
-  h1 { font-size: 32px; }
-  h2 { font-size: 26px; }
-  .hero-visual { grid-template-columns: 1fr; }
+  /* Section spacing */
+  .section-inner { padding: 52px var(--px); }
+  .process .section-inner { padding: 52px var(--px) 60px; }
+
+  /* Nav */
+  .nav-logo img { height: 44px; }
+
+  /* Mobile menu font */
+  .mobile-nav a { font-size: 20px; }
+
+  /* Process */
+  .process-card { padding: 24px 20px 28px; }
+
+  /* Service rows */
+  .svc-row-inner { padding: 48px var(--px); gap: 28px; }
+  .svc-text h3 { font-size: 22px; }
+  .svc-text p { font-size: 15px; }
+
+  /* Video carousel: narrower on very small screens */
+  .vid-carousel { width: 220px; }
+  .vid-arrow--prev { left: -28px; }
+  .vid-arrow--next { right: -28px; }
+
+  /* CTA */
+  .btn-hero { font-size: 14px; padding: 13px 24px; }
+  .hero-ctas { flex-direction: column; align-items: flex-start; }
+
+  /* Footer wordmark */
+  .footer-wordmark { font-size: clamp(22px, 8vw, 56px); }
+
+  /* hc-dark */
   .hc-dark { grid-column: span 1; }
   .hc-row { grid-template-columns: 1fr 1fr; }
-  .proof-grid { grid-template-columns: 1fr 1fr; }
-  .hero-trust { flex-wrap: wrap; gap: 12px; }
-  .hero-trust-sep { display: none; }
+}
+
+/* ── 375px: iPhone SE and smallest common viewports ── */
+@media (max-width: 375px) {
+  :root { --px: 14px; }
+  .hero-h2 { font-size: 26px; }
+  .hero-sub { font-size: 14px; }
+  .vid-carousel { width: 200px; }
+  .vid-arrow--prev { left: -24px; }
+  .vid-arrow--next { right: -24px; }
+  .hc-stat-val { font-size: 18px; }
+  .stats-banner-val { font-size: 22px; }
 }
