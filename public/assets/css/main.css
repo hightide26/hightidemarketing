@@ -2810,8 +2810,11 @@ p { color: var(--text-body); line-height: 1.75; }
   .hero-sub { text-align: center; max-width: 100%; }
   .hero-ctas { justify-content: center; }
 
-  /* Headline — bigger on mobile */
-  .hero-h2 { font-size: clamp(38px, 10vw, 54px); }
+  /* Headline — large on mobile, two short lines fill the space */
+  .hero-h2 { font-size: clamp(48px, 13vw, 68px); line-height: 1.05; }
+
+  /* Subheadline — bold so it reads against the video */
+  .hero-sub { font-weight: 700; }
 
   /* Remove stat card bubbles from hero on mobile entirely */
   .hero-visual { display: none; }
@@ -2934,14 +2937,13 @@ p { color: var(--text-body); line-height: 1.75; }
   /* Typography */
   h2 { font-size: clamp(24px, 7vw, 32px); }
   .section-header h2 { font-size: clamp(24px, 7vw, 32px); }
-  .hero-h2 { font-size: clamp(28px, 8vw, 36px); line-height: 1.1; }
-  .hero-sub { font-size: 15px; }
+  .hero-h2 { font-size: clamp(42px, 12vw, 58px); line-height: 1.05; }
+  .hero-sub { font-size: 15px; font-weight: 700; }
   .hero-eyebrow { font-size: 10px; }
 
   /* Hero — mobile only, no stat cards */
   .hero-scroll-zone { height: 120vh; }
   .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
-  .hero-h2 { font-size: clamp(32px, 9.5vw, 46px); }
   .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
 
   /* Stat cards: single column */
@@ -2992,8 +2994,8 @@ p { color: var(--text-body); line-height: 1.75; }
 /* ── 375px: iPhone SE and smallest common viewports ── */
 @media (max-width: 375px) {
   :root { --px: 14px; }
-  .hero-h2 { font-size: 26px; }
-  .hero-sub { font-size: 14px; }
+  .hero-h2 { font-size: clamp(36px, 10.5vw, 48px); line-height: 1.05; }
+  .hero-sub { font-size: 14px; font-weight: 700; }
   .hero-scroll-zone { height: 120vh; }
   .vid-carousel { width: 200px; }
   .vid-arrow--prev { left: -24px; }
