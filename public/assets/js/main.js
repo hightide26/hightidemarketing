@@ -277,78 +277,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── METHOD CARD DECK — mobile swipe (tiered stack) ── */
+  /* ── METHOD CARDS — 2-col tap to expand on mobile ── */
   if (IS_MOBILE) {
     const methodGrid = document.querySelector('.method-grid');
     if (methodGrid) {
       const cards = Array.from(methodGrid.querySelectorAll('.method-card'));
-      const n = cards.length;
-      let current = 0;
-      let busy = false;
-      let touchStartX = 0;
-      let touchStartY = 0;
+      const chevron = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
 
-      /* Assign data-deck positions to all cards */
-      function applyDeck(skipCard) {
-        cards.forEach((card, i) => {
-          if (card === skipCard) return; // let exit animation finish
-          const pos = (i - current + n) % n;
-          card.dataset.deck = pos === 0 ? '0'
-                            : pos === 1 ? '1'
-                            : pos === 2 ? '2'
-                            : 'back';
+      cards.forEach(card => {
+        // Inject "Learn more" toggle below the title
+        const toggle = document.createElement('div');
+        toggle.className = 'method-card-toggle';
+        toggle.innerHTML = 'Learn more ' + chevron;
+        card.appendChild(toggle);
+
+        card.addEventListener('click', () => {
+          const opening = !card.classList.contains('is-open');
+
+          // Close any other open card first
+          cards.forEach(c => {
+            if (c !== card && c.classList.contains('is-open')) {
+              c.classList.remove('is-open');
+              c.querySelector('.method-card-toggle').innerHTML = 'Learn more ' + chevron;
+            }
+          });
+
+          card.classList.toggle('is-open', opening);
+          toggle.innerHTML = (opening ? 'Close ' : 'Learn more ') + chevron;
         });
-      }
-
-      /* Swipe left → advance to next card */
-      function advance() {
-        if (busy) return;
-        busy = true;
-
-        const exitCard = cards[current];
-        exitCard.dataset.deck = 'exit'; // fly off left
-
-        // Immediately reposition the rest of the deck
-        current = (current + 1) % n;
-        applyDeck(exitCard);
-
-        // After exit animation finishes, silently snap exit card to back
-        setTimeout(() => {
-          exitCard.style.transition = 'none';
-          exitCard.dataset.deck = 'back';
-          void exitCard.getBoundingClientRect(); // force reflow
-          exitCard.style.transition = '';
-          busy = false;
-        }, 420);
-      }
-
-      /* Swipe right → go back one card */
-      function retreat() {
-        if (busy) return;
-        busy = true;
-        current = (current - 1 + n) % n;
-        applyDeck();
-        busy = false;
-      }
-
-      /* Initialise */
-      applyDeck();
-
-      /* Touch events — horizontal swipe only */
-      methodGrid.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-      }, { passive: true });
-
-      methodGrid.addEventListener('touchend', e => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const dy = e.changedTouches[0].clientY - touchStartY;
-        // Only fire on clear horizontal swipes, not vertical scrolls
-        if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-          if (dx < 0) advance();
-          else retreat();
-        }
-      }, { passive: true });
+      });
     }
   }
 
