@@ -905,6 +905,15 @@ p { color: var(--text-body); line-height: 1.75; }
 /* ══════════════════════════════════════════
    CLIENT TICKER — Sanity-style gold band
 ══════════════════════════════════════════ */
+
+/* When the ticker lives inside .hero, it sits as the last flex child
+   (hero is flex-direction: column) and floats naturally to the bottom.
+   z-index 3 keeps it above the video overlay (z-index 1) and on par with hero-inner. */
+.hero-ticker {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+}
 .clients-ticker {
   display: flex;
   align-items: stretch;
