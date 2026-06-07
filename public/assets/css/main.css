@@ -663,7 +663,7 @@ p { color: var(--text-body); line-height: 1.75; }
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--nav-h) var(--px) 140px; /* 140px bottom = watermark height + breathing room */
+  padding: var(--nav-h) var(--px) 88px; /* 88px bottom = watermark + breathing room above 52px ticker */
   flex: 1;
   display: grid;
   grid-template-columns: 55fr 45fr;
@@ -830,7 +830,7 @@ p { color: var(--text-body); line-height: 1.75; }
 /* H1 Brand Watermark */
 .hero-watermark {
   position: absolute;
-  bottom: 32px;
+  bottom: 84px; /* 52px ticker + 32px original gap */
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -3362,7 +3362,7 @@ p { color: var(--text-body); line-height: 1.75; }
   /* Watermark — spans ~90% of screen width */
   .hero-watermark {
     font-size: clamp(44px, 12vw, 120px);
-    bottom: 16px;
+    bottom: 68px; /* 52px ticker + 16px gap */
     color: rgba(255,255,255,0.22);
     letter-spacing: -0.03em;
     width: 100%;
@@ -3572,8 +3572,8 @@ p { color: var(--text-body); line-height: 1.75; }
 
   /* Hero — mobile only */
   .hero-scroll-zone { height: calc(var(--vh, 1svh) * 100); }
-  .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 48px; }
-  .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 10px; width: 100%; text-align: center; left: 0; transform: none; }
+  .hero-inner { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 32px; }
+  .hero-watermark { font-size: clamp(36px, 11vw, 80px); bottom: 62px; width: 100%; text-align: center; left: 0; transform: none; }
 
   /* Stat cards: single column */
   .hero-visual { grid-template-columns: 1fr; }
