@@ -9,95 +9,396 @@ import Layout from '../../layouts/Layout.astro';
 
 <main>
 
-  <!-- HERO -->
-  <section class="svc-pg-hero" aria-labelledby="services-pg-heading">
-    <div class="svc-pg-hero-overlay" aria-hidden="true"></div>
-    <div class="svc-pg-hero-inner">
-      <span class="tag">Services</span>
-      <h1 id="services-pg-heading">Every Service Is Powered by<br><em>the Same Intelligence.</em></h1>
-      <p class="svc-pg-hero-sub">Before we run a single ad, post a single piece of content, or build a single page — we identify exactly who your buyers are. Everything we do runs off that data. That is what makes it work.</p>
+  <!-- ═══════════════════════════════════════════════════
+       HERO — Cinematic, matches homepage
+  ═══════════════════════════════════════════════════ -->
+  <div class="hero-scroll-zone">
+  <section class="hero" aria-label="Services Hero">
+
+    <div class="hero-bg-wrap" aria-hidden="true">
+      <video class="hero-bg-video" muted playsinline preload="auto">
+        <source src="/assets/videos/hero-bg.mp4" type="video/mp4">
+      </video>
     </div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="hero-content">
+        <p class="hero-eyebrow">Our Services</p>
+        <h1 class="hero-h2">Every Service Starts<br>With Knowing Your <em>Buyer.</em></h1>
+        <p class="hero-sub">Before we post a single piece of content, run a single ad, or build a single page — we use High Tide Radar to identify exactly who your buyers are. Every service we offer runs off that intelligence. That is what makes it work.</p>
+        <div class="hero-ctas">
+          <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-hero">Book Your Free Strategy Call →</a>
+        </div>
+      </div>
+
+      <!-- Social Media Stat Cards -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">$29,045</div>
+            <div class="hc-stat-label">Direct Attribution Sales</div>
+            <div class="hc-stat-sub">tracked from social media content</div>
+          </div>
+        </div>
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">18.37M+</div>
+            <div class="hc-stat-label">Impressions</div>
+            <div class="hc-stat-sub">generated across all client platforms</div>
+          </div>
+        </div>
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">806K</div>
+            <div class="hc-stat-label">Video Views</div>
+            <div class="hc-stat-sub">across client content this year</div>
+          </div>
+        </div>
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">6,137</div>
+            <div class="hc-stat-label">New Followers</div>
+            <div class="hc-stat-sub">gained for clients YTD</div>
+          </div>
+        </div>
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">741</div>
+            <div class="hc-stat-label">Facebook Posts</div>
+            <div class="hc-stat-sub">published for clients YTD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="hero-watermark" aria-hidden="true">Our Services</h2>
+
+  </section>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       SERVICES — Every Service Is Powered by the Same Intelligence
+  ═══════════════════════════════════════════════════ -->
+  <section class="svc-showcase" id="services" aria-labelledby="services-heading">
+
+    <div class="svc-intro section-inner reveal">
+      <span class="tag" style="margin:0 auto;">Services</span>
+      <h2 id="services-heading" style="text-align:center;">Every Service Is Powered by<br>the <em>Same Intelligence.</em></h2>
+    </div>
+
+    <!-- 01 Social Media -->
+    <div class="svc-row" data-svc="1">
+      <div class="svc-row-inner">
+        <div class="svc-text svc-animate-text">
+          <div class="svc-eyebrow">
+            <span class="svc-num">01</span>
+            <span class="tag">Social Media</span>
+          </div>
+          <h3>Social Media That Reaches the Right People, Not Just More People.</h3>
+          <p>We manage your entire social presence with one difference from every other agency — we know who your buyers are before we post a single piece of content. Every campaign, every piece of creative, and every dollar of ad spend is aimed at your identified audience, not a broad demographic guess.</p>
+          <ul class="svc-bullets">
+            <li>Content strategy and creation built around your verified audience</li>
+            <li>Organic social media management</li>
+            <li>Paid social campaigns served to identified buyers</li>
+          </ul>
+          <a href="/services/social-media" class="btn-ghost svc-cta">Learn More About Social Media →</a>
+        </div>
+        <div class="svc-visual svc-animate-visual">
+          <div class="vid-carousel" aria-label="Social media video examples">
+            <div class="vid-track" id="vidTrack01">
+              <div class="vid-slide">
+                <video class="vid-clip" autoplay muted loop playsinline preload="metadata">
+                  <source src="/assets/videos/social/svc-02.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="vid-slide">
+                <video class="vid-clip" muted loop playsinline preload="none">
+                  <source src="/assets/videos/social/svc-03.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="vid-slide">
+                <video class="vid-clip" muted loop playsinline preload="none">
+                  <source src="/assets/videos/social/svc-04.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="vid-slide">
+                <video class="vid-clip" muted loop playsinline preload="none">
+                  <source src="/assets/videos/social/svc-05.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <div class="vid-dots" aria-hidden="true">
+              <button class="vid-dot active" data-idx="0"></button>
+              <button class="vid-dot" data-idx="1"></button>
+              <button class="vid-dot" data-idx="2"></button>
+              <button class="vid-dot" data-idx="3"></button>
+            </div>
+            <button class="vid-arrow vid-arrow--prev" aria-label="Previous video">‹</button>
+            <button class="vid-arrow vid-arrow--next" aria-label="Next video">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 Video & Photography -->
+    <div class="svc-row svc-row--flip svc-row--alt" data-svc="2">
+      <div class="svc-row-inner">
+        <div class="svc-text svc-animate-text">
+          <div class="svc-eyebrow">
+            <span class="svc-num">02</span>
+            <span class="tag">Video &amp; Photography</span>
+          </div>
+          <h3>Visual Content That Builds Trust Before You Ever Say a Word.</h3>
+          <p>We handle your entire visual content strategy from start to finish. Professional videography, photography, video editing, and post-production — so your brand shows up on every platform looking like the business your clients already know you are. Video is not an add-on at High Tide. It is the foundation of everything we build.</p>
+          <ul class="svc-bullets">
+            <li>Full visual content strategy tied to your audience intelligence</li>
+            <li>Done-for-you videography and photography</li>
+            <li>Video editing and post production</li>
+          </ul>
+          <a href="/services/video" class="btn-ghost svc-cta">Learn More About Video →</a>
+        </div>
+        <div class="svc-visual svc-animate-visual">
+          <div class="svc-media-box svc-media-box--video">
+            <video class="svc-video" autoplay muted loop playsinline preload="none">
+              <source src="/assets/videos/svc-bts.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 Website Design -->
+    <div class="svc-row" data-svc="3">
+      <div class="svc-row-inner">
+        <div class="svc-text svc-animate-text">
+          <div class="svc-eyebrow">
+            <span class="svc-num">03</span>
+            <span class="tag">Website Design</span>
+          </div>
+          <h3>A Website That Works as Hard as You Do.</h3>
+          <p>We design and build websites that look great, load fast, rank on Google, and turn the warm traffic Radar sends your way into customers. Every site we build is optimized for search, built for conversion, and completely yours from day one. No templates. No shortcuts. Built to perform.</p>
+          <ul class="svc-bullets">
+            <li>Custom website design and development</li>
+            <li>Landing pages built to convert warm traffic</li>
+            <li>SEO built in from the ground up</li>
+          </ul>
+          <a href="/services/websites" class="btn-ghost svc-cta">Learn More About Websites →</a>
+        </div>
+        <div class="svc-visual svc-animate-visual">
+          <div class="mockup-carousel" aria-label="Website portfolio examples">
+            <div class="mockup-track">
+              <div class="mockup-slide">
+                <img src="/assets/images/work-halderman-mockup.webp" alt="Halderman Real Estate website" width="1400" height="791" loading="lazy" decoding="async">
+              </div>
+              <div class="mockup-slide">
+                <img src="/assets/images/work-rural-realty-mockup.webp" alt="Rural Realty website" width="1400" height="781" loading="lazy" decoding="async">
+              </div>
+              <div class="mockup-slide">
+                <img src="/assets/images/work-contego-mockup.webp" alt="Contego Systems website" width="1400" height="791" loading="lazy" decoding="async">
+              </div>
+              <button class="mockup-arrow mockup-arrow--prev" aria-label="Previous website">‹</button>
+              <button class="mockup-arrow mockup-arrow--next" aria-label="Next website">›</button>
+            </div>
+            <div class="mockup-dots" aria-hidden="true">
+              <button class="mockup-dot active" data-idx="0"></button>
+              <button class="mockup-dot" data-idx="1"></button>
+              <button class="mockup-dot" data-idx="2"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 Paid Advertising -->
+    <div class="svc-row svc-row--flip svc-row--alt" data-svc="4">
+      <div class="svc-row-inner">
+        <div class="svc-text svc-animate-text">
+          <div class="svc-eyebrow">
+            <span class="svc-num">04</span>
+            <span class="tag">Paid Advertising</span>
+          </div>
+          <h3>Paid Ads That Actually Pay Off.</h3>
+          <p>Every dollar with a job. Every campaign with a return. We run performance-focused ad campaigns on Google, Meta, TikTok, and YouTube — but unlike every other agency, our campaigns run off a verified list of your actual buyers. Not a lookalike audience. Not a demographic guess. Real people who are already in the market for what you sell.</p>
+          <ul class="svc-bullets">
+            <li>Google Ads, Meta Ads, TikTok Ads, and YouTube Ads management</li>
+            <li>Conversion-focused campaigns built from identified buyer lists</li>
+            <li>Real-time performance dashboards with full transparency</li>
+          </ul>
+          <a href="/services/paid-ads" class="btn-ghost svc-cta">Learn More About Paid Ads →</a>
+        </div>
+        <div class="svc-visual svc-animate-visual">
+          <div class="svc-mockup-wrap svc-seo-wrap">
+            <img src="/assets/images/work-paid-ads-syncs.webp" alt="High Tide Radar audience synced to Facebook Ads" width="1400" height="801" loading="lazy" decoding="async" class="svc-mockup-img">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 SEO -->
+    <div class="svc-row" data-svc="5">
+      <div class="svc-row-inner">
+        <div class="svc-text svc-animate-text">
+          <div class="svc-eyebrow">
+            <span class="svc-num">05</span>
+            <span class="tag">SEO</span>
+          </div>
+          <h3>SEO That Gets You Found First.</h3>
+          <p>Get found by people already looking for what you offer. Long-term organic growth built on technical SEO, strategic content, and search intent that actually converts. Every piece of content we create is built to rank and built to sell.</p>
+          <ul class="svc-bullets">
+            <li>Technical SEO audits and fixes</li>
+            <li>Strategic content creation</li>
+            <li>Local and national SEO campaigns</li>
+          </ul>
+          <a href="/services/seo" class="btn-ghost svc-cta">Learn More About SEO →</a>
+        </div>
+        <div class="svc-visual svc-animate-visual">
+          <div class="svc-mockup-wrap svc-seo-wrap">
+            <img src="/assets/images/work-seo-results.webp" alt="Google Search Console results showing 184.7K clicks" width="2312" height="1405" loading="lazy" decoding="async" class="svc-mockup-img">
+          </div>
+        </div>
+      </div>
+    </div>
+
   </section>
 
-  <!-- SERVICE GRID -->
-  <section class="svc-hub" aria-labelledby="svc-hub-heading">
+  <!-- ═══════════════════════════════════════════════════
+       PROCESS — Getting Started Is Simple
+  ═══════════════════════════════════════════════════ -->
+  <section class="process" aria-labelledby="process-heading">
     <div class="section-inner">
-      <h2 id="svc-hub-heading" class="svc-hub-heading reveal">What We Do</h2>
+      <div class="section-header reveal" style="text-align:center;">
+        <span class="tag" style="margin:0 auto;">The Process</span>
+        <h2 id="process-heading">Getting Started<br>Is <em>Simple.</em></h2>
+      </div>
 
-      <div class="svc-hub-grid">
-
-        <a href="/services/social-media" class="svc-hub-card reveal d1">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      <div class="process-track">
+        <div class="process-spine" aria-hidden="true">
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>01</span></div>
+            <div class="process-spine-half process-spine-half--right"><div class="process-spine-fill"></div></div>
           </div>
-          <div class="svc-hub-card-num">01</div>
-          <h3>Social Media</h3>
-          <p>Organic content and paid campaigns that reach your verified buyers on Facebook, Instagram, and TikTok — not a demographic profile.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
-
-        <a href="/services/video" class="svc-hub-card reveal d2">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"><div class="process-spine-fill"></div></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>02</span></div>
+            <div class="process-spine-half process-spine-half--right"><div class="process-spine-fill"></div></div>
           </div>
-          <div class="svc-hub-card-num">02</div>
-          <h3>Video &amp; Photography</h3>
-          <p>Short-form social content, YouTube brand films, and client testimonials — produced end-to-end. We handle scripting, filming, editing, and deployment.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
-
-        <a href="/services/websites" class="svc-hub-card reveal d3">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"><div class="process-spine-fill"></div></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>03</span></div>
+            <div class="process-spine-half process-spine-half--right"></div>
           </div>
-          <div class="svc-hub-card-num">03</div>
-          <h3>Website Design</h3>
-          <p>Custom-built websites that load fast, rank on Google, and convert the warm Radar traffic we send your way into real customers.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
+        </div>
 
-        <a href="/services/paid-ads" class="svc-hub-card reveal d1">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        <div class="process-cards">
+          <div class="process-card">
+            <p class="process-card-label">Step 01</p>
+            <h3>Free Discovery Call</h3>
+            <p>We learn your business, your goals, and where your current marketing is bleeding money. No pitch deck. No pressure. Just an honest conversation about what is working and what is not.</p>
           </div>
-          <div class="svc-hub-card-num">04</div>
-          <h3>Paid Advertising</h3>
-          <p>Google, Meta, TikTok, and YouTube ad campaigns running off your verified buyer list — not a lookalike audience. Every dollar with a job.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
-
-        <a href="/services/seo" class="svc-hub-card reveal d2">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div class="process-card">
+            <p class="process-card-label">Step 02</p>
+            <h3>Custom Radar-Backed Strategy</h3>
+            <p>We run your audience through Radar, identify who is in the market right now, analyze your competitors, and build a targeting plan specific to your business. Not a template. A strategy built around your actual buyers.</p>
           </div>
-          <div class="svc-hub-card-num">05</div>
-          <h3>SEO</h3>
-          <p>Technical SEO, local visibility, content built to rank, and link building — so buyers find you before they ever see a competitor's ad.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
-
-        <a href="/services/radar" class="svc-hub-card svc-hub-card--radar reveal d3">
-          <div class="svc-hub-card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <div class="process-card">
+            <p class="process-card-label">Step 03</p>
+            <h3>Execute, Optimize and Grow</h3>
+            <p>We launch across every channel, optimize daily, and report with complete transparency. You see exactly where every dollar is going and what it is returning. You own everything we build — every asset, every account, every day.</p>
           </div>
-          <div class="svc-hub-card-num">06</div>
-          <h3>High Tide Radar</h3>
-          <p>Our exclusive audience intelligence platform. Identifies your in-market buyers by name — before they fill out a form anywhere. The engine behind everything we do.</p>
-          <span class="svc-hub-card-link">Learn more →</span>
-        </a>
-
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- BOTTOM CTA -->
-  <section class="svc-hub-cta">
+  <!-- ═══════════════════════════════════════════════════
+       TESTIMONIALS
+  ═══════════════════════════════════════════════════ -->
+  <section class="testimonials" aria-labelledby="testi-heading">
     <div class="section-inner">
-      <div class="svc-hub-cta-inner reveal">
-        <span class="tag">Not Sure Where to Start?</span>
-        <h2>Book a Free Strategy Call.<br><em>We Will Figure It Out Together.</em></h2>
-        <p>We will look at your current marketing, identify what is working and what is bleeding budget, and show you exactly what we would do differently. No pitch deck. No pressure.</p>
-        <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book Your Free Strategy Call →</a>
+      <div class="section-header reveal">
+        <span class="tag">Testimonials</span>
+        <h2 id="testi-heading">Chosen by Growing Businesses<br><em>Nationwide.</em></h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal d1">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Thank you so much to Chantz and his team at High Tide Marketing for the website. It was delivered extremely fast and I had zero revisions when it was complete. Highly recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">CE</div>
+            <div>
+              <div class="testi-name">Christine Estridge</div>
+              <div class="testi-role">Google Review</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal d2">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Chantz and his team did an outstanding job delivering a site that matched my vision and helped drive leads to my business. They continue to keep my site up to date. 10/10 would recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">NS</div>
+            <div>
+              <div class="testi-name">Nolan Sampson</div>
+              <div class="testi-role">Google Review</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal d3">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Chantz and his team at High Tide Marketing were great to work with. His communication and attention to detail was outstanding. He really took the time to understand exactly what I needed. Highly recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">AH</div>
+            <div>
+              <div class="testi-name">Alec Horton</div>
+              <div class="testi-role">Brokerage Owner</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       FINAL CTA
+  ═══════════════════════════════════════════════════ -->
+  <section class="final-cta" aria-labelledby="cta-heading">
+    <div class="section-inner">
+      <div class="final-cta-layout">
+        <div class="final-cta-content reveal">
+          <span class="tag">Ready to Grow?</span>
+          <h2 id="cta-heading">The Tide Is Rising.<br>Is Your Brand <em>Ready?</em></h2>
+          <p>Book a free 30-minute strategy call. No pressure, no pitch deck — just a real conversation about where you are and where you want to go.</p>
+          <ul class="final-cta-trust">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>No long-term contracts</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>You own everything we build</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Full transparency, real-time reporting</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Video-first strategy built in from day one</li>
+          </ul>
+        </div>
+        <div class="final-cta-form reveal d2">
+          <iframe
+            src="https://api.leadconnectorhq.com/widget/booking/ZVd5T6AF0kg90QYwj8jJ"
+            style="width:100%;border:none;overflow:hidden;"
+            scrolling="no"
+            id="ZVd5T6AF0kg90QYwj8jJ_services"
+          ></iframe>
+        </div>
       </div>
     </div>
   </section>
