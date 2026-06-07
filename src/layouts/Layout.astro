@@ -1,0 +1,160 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalPath?: string;
+}
+const {
+  title,
+  description,
+  ogImage = 'https://hightidemarketing.com/assets/images/og-image.jpg',
+  canonicalPath = '',
+} = Astro.props;
+const canonical = `https://hightidemarketing.com${canonicalPath}`;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonical}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+
+  <!-- Canonical -->
+  <link rel="canonical" href={canonical}>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+  <meta name="theme-color" content="#0d2137">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- GHL booking widget -->
+  <script src="https://link.msgsndr.com/js/form_embed.js" async></script>
+</head>
+<body>
+<div class="page-guard">
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="High Tide Marketing home">
+        <img class="logo-color" src="/assets/images/logo-color.svg"  alt="High Tide Marketing" width="160" height="53">
+        <img class="logo-white" src="/assets/images/logo-white.webp" alt="High Tide Marketing" width="160" height="53">
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="/#radar">High Tide Radar</a>
+        <a href="/services">Services</a>
+        <a href="/#process">Process</a>
+        <a href="/#about">About</a>
+        <a href="/blog">Blog</a>
+      </nav>
+      <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold nav-cta">Book a Strategy Call</a>
+      <button class="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <button class="mobile-menu-close" id="mobile-close" aria-label="Close navigation menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="/#radar">High Tide Radar</a>
+      <a href="/services">Services</a>
+      <a href="/#process">Process</a>
+      <a href="/#about">About</a>
+      <a href="/blog">Blog</a>
+    </nav>
+    <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book a Strategy Call</a>
+  </div>
+
+  <slot />
+
+  <!-- FOOTER -->
+  <footer class="footer" aria-label="Footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/images/logo-horizontal.png" alt="High Tide Marketing" width="160" height="40" loading="lazy">
+          <p>A data-powered digital marketing agency. We identify your in-market buyers first, then surround them across every channel.</p>
+          <div class="footer-brand-badges">
+            <span class="footer-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Veteran Owned
+            </span>
+            <span class="footer-badge">Month-to-Month</span>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="/services/social-media">Social Media</a></li>
+            <li><a href="/services/video">Video Content</a></li>
+            <li><a href="/services/websites">Website Design</a></li>
+            <li><a href="/services/paid-ads">Paid Ads</a></li>
+            <li><a href="/services/seo">SEO</a></li>
+            <li><a href="/services/radar">High Tide Radar</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/#radar">High Tide Radar</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="https://calendly.com/hightidemarketing/strategy-call">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:+19122315182">(912) 231-5182</a></li>
+            <li><a href="mailto:Support@HighTideMarketing.com">Support@HighTideMarketing.com</a></li>
+            <li><a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer">Book a Strategy Call</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 High Tide Marketing. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-wordmark-wrap" aria-hidden="true">
+        <span class="footer-wordmark">HIGH TIDE MARKETING</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/js/main.js" defer></script>
+
+</div><!-- /.page-guard -->
+</body>
+</html>
