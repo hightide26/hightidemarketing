@@ -902,49 +902,101 @@ p { color: var(--text-body); line-height: 1.75; }
 /* ══════════════════════════════════════════
    LOGO MARQUEE
 ══════════════════════════════════════════ */
-.marquee-section {
-  background: var(--bg-alt);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 28px 0;
-  overflow: hidden;
-}
-.marquee-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  text-align: center;
-  margin-bottom: 20px;
-}
-.marquee-wrap { overflow: hidden; }
-.marquee-track {
+/* ══════════════════════════════════════════
+   CLIENT TICKER — Sanity-style gold band
+══════════════════════════════════════════ */
+.clients-ticker {
   display: flex;
-  gap: 0;
+  align-items: stretch;
+  height: 52px;
+  background: var(--gold);
+  overflow: hidden;
+  position: relative;
 }
-.marquee-inner {
+
+/* Scrolling text area */
+.ticker-scroll-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  /* Fade edges into the gold */
+  mask-image: linear-gradient(to right, transparent 0%, #000 60px, #000 calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 60px, #000 calc(100% - 24px), transparent 100%);
+}
+
+.ticker-track {
+  display: flex;
+  height: 100%;
+}
+
+.ticker-row {
   display: flex;
   align-items: center;
-  gap: 64px;
-  padding: 0 32px;
+  gap: 0;
+  white-space: nowrap;
   flex-shrink: 0;
-  animation: marqueeScroll 28s linear infinite;
+  animation: tickerScroll 22s linear infinite;
+  padding-right: 0;
 }
-@keyframes marqueeScroll {
+
+@keyframes tickerScroll {
   from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
+  to   { transform: translateX(-50%); }
 }
-.marquee-inner img {
-  opacity: 0.45;
-  filter: grayscale(100%);
-  transition: opacity 0.3s, filter 0.3s;
-  height: 32px;
-  width: auto;
-  object-fit: contain;
+
+.ticker-row span {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--navy-deep);
+  padding: 0 20px;
 }
-.marquee-inner img:hover { opacity: 0.75; filter: grayscale(0%); }
-.marquee-wrap:hover .marquee-inner { animation-play-state: paused; }
+.ticker-sep {
+  color: rgba(7, 31, 43, 0.35) !important;
+  padding: 0 !important;
+  font-weight: 400 !important;
+}
+
+/* Fixed right badge */
+.ticker-badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 24px 0 20px;
+  background: var(--navy-deep);
+  position: relative;
+}
+/* Angled left edge — matches Sanity's style */
+.ticker-badge::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 52px 20px;
+  border-color: transparent transparent var(--navy-deep) transparent;
+}
+.ticker-badge span {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .ticker-badge { display: none; }
+  .ticker-scroll-wrap {
+    mask-image: linear-gradient(to right, transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  }
+}
 
 /* ══════════════════════════════════════════
    PAIN / PATTERN INTERRUPT
