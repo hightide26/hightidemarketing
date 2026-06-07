@@ -408,6 +408,203 @@ p { color: var(--text-body); line-height: 1.75; }
 .mobile-nav a:hover { color: #fff; }
 
 /* ══════════════════════════════════════════
+   MEGA MENU — Services
+══════════════════════════════════════════ */
+.nav-mega-wrap {
+  position: static;
+}
+
+/* Trigger button — same feel as nav links */
+.nav-mega-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.nav-mega-btn:hover,
+.nav-mega-wrap.is-open .nav-mega-btn { color: #fff; }
+
+.mega-chevron {
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+}
+.nav-mega-wrap.is-open .mega-chevron { transform: rotate(180deg); }
+
+/* Panel — fixed full-width, slides down from nav */
+.mega-panel {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: rgba(5, 13, 26, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, visibility 0.22s, transform 0.22s ease;
+}
+.nav-mega-wrap.is-open .mega-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Inner layout: service grid + feature card */
+.mega-panel-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 36px var(--px) 32px;
+  display: grid;
+  grid-template-columns: 1fr 272px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* 2-column grid of service items */
+.mega-services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.mega-svc {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.18s;
+}
+.mega-svc:hover { background: rgba(255,255,255,0.05); }
+
+.mega-svc-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(91,196,232,0.08);
+  border: 1px solid rgba(91,196,232,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sky);
+  transition: background 0.18s, border-color 0.18s;
+}
+.mega-svc:hover .mega-svc-icon {
+  background: rgba(91,196,232,0.16);
+  border-color: rgba(91,196,232,0.35);
+}
+
+.mega-svc-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+}
+.mega-svc-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+/* High Tide Radar feature card */
+.mega-feature {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, rgba(91,196,232,0.09) 0%, rgba(0,100,160,0.06) 100%);
+  border: 1px solid rgba(91,196,232,0.2);
+  border-radius: 14px;
+  padding: 28px 24px 24px;
+}
+.mega-feature::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(91,196,232,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.mega-feature-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sky);
+  margin-bottom: 8px;
+}
+.mega-feature-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.mega-feature-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.mega-feature-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sky);
+  text-decoration: none;
+  transition: gap 0.2s;
+}
+.mega-feature-cta:hover { gap: 9px; }
+
+/* Footer bar */
+.mega-panel-footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.mega-panel-footer > * {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 14px var(--px);
+}
+.mega-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  transition: color 0.2s, gap 0.2s;
+}
+.mega-all-link:hover { color: #fff; gap: 8px; }
+
+/* Hide mega panel on mobile — hamburger handles nav there */
+@media (max-width: 900px) {
+  .nav-mega-wrap { display: none; }
+}
+
+/* ══════════════════════════════════════════
    HERO — Cinematic Video Background
 ══════════════════════════════════════════ */
 :root {

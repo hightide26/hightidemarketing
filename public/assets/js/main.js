@@ -69,6 +69,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
   });
 
+  /* ── MEGA MENU — Services ── */
+  const megaWrap = document.getElementById('nav-mega-services');
+  if (megaWrap) {
+    const megaTrigger = megaWrap.querySelector('.nav-mega-btn');
+
+    function openMega() {
+      megaWrap.classList.add('is-open');
+      megaTrigger.setAttribute('aria-expanded', 'true');
+    }
+    function closeMega() {
+      megaWrap.classList.remove('is-open');
+      megaTrigger.setAttribute('aria-expanded', 'false');
+    }
+    function toggleMega() {
+      megaWrap.classList.contains('is-open') ? closeMega() : openMega();
+    }
+
+    // Toggle on trigger click
+    megaTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMega();
+    });
+
+    // Close when clicking anywhere outside the mega wrap
+    document.addEventListener('click', () => closeMega());
+
+    // Prevent clicks inside the panel from closing it
+    megaWrap.addEventListener('click', (e) => e.stopPropagation());
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMega();
+    });
+
+    // Close on any link inside mega (navigating away)
+    megaWrap.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', closeMega);
+    });
+
+    // Close if mobile menu opens
+    hamburger.addEventListener('click', closeMega);
+  }
+
   /* ── SCROLL REVEAL (CSS-driven via IntersectionObserver) ── */
   const revealObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
