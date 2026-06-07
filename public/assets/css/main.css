@@ -439,13 +439,13 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 .nav-mega-wrap.is-open .mega-chevron { transform: rotate(180deg); }
 
-/* Panel — fixed full-width, slides down from nav */
+/* Panel — absolute inside the fixed nav (nav is the containing block) */
 .mega-panel {
-  position: fixed;
-  top: var(--nav-h);
+  position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
-  z-index: 99;
+  z-index: 200;
   background: rgba(5, 13, 26, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
