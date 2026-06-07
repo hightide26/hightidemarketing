@@ -944,7 +944,7 @@ p { color: var(--text-body); line-height: 1.75; }
   gap: 0;
   white-space: nowrap;
   flex-shrink: 0;
-  animation: tickerScroll 22s linear infinite;
+  animation: tickerScroll 45s linear infinite;
   padding-right: 0;
 }
 
