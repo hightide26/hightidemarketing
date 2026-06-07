@@ -1936,48 +1936,7 @@ p { color: var(--text-body); line-height: 1.75; }
 /* ══════════════════════════════════════════
    STATS BANNER — navy strip after hero
 ══════════════════════════════════════════ */
-.stats-banner {
-  background: #0a2d40;
-  border-top: 3px solid var(--gold);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.stats-banner-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 48px var(--px);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-}
-.stats-banner-item {
-  text-align: center;
-  position: relative;
-}
-.stats-banner-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: -16px;
-  top: 12px;
-  bottom: 12px;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.10), transparent);
-}
-.stats-banner-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(28px, 3.6vw, 40px);
-  font-weight: 700;
-  color: var(--gold);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.stats-banner-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-top: 12px;
-}
+/* .stats-banner removed — replaced by .clients-ticker */
 
 /* ══════════════════════════════════════════
    WHAT WE DO — 5-card overview
@@ -3261,8 +3220,6 @@ p { color: var(--text-body); line-height: 1.75; }
   .faq-left { position: static; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
   .footer-brand { grid-column: span 2; }
-  .stats-banner-inner { grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
-  .stats-banner-item:nth-child(2)::after { display: none; }
   .wwd-grid { grid-template-columns: repeat(2, 1fr); }
   .radar-layout { grid-template-columns: 1fr; }
   .method-grid { grid-template-columns: repeat(2, 1fr); }
@@ -3420,8 +3377,6 @@ p { color: var(--text-body); line-height: 1.75; }
   .wwd-grid { grid-template-columns: 1fr 1fr; }
   .stage-grid { grid-template-columns: 1fr; gap: 20px; }
   .stage-grid::before { display: none; }
-  .stats-banner-inner { grid-template-columns: 1fr 1fr; gap: 24px 16px; padding: 40px var(--px); }
-  .stats-banner-item::after { display: none !important; }
 
   /* ── METHOD CARDS — 2-column tap grid on mobile ── */
   .method-grid {
@@ -3619,8 +3574,6 @@ p { color: var(--text-body); line-height: 1.75; }
   .wwd-grid { grid-template-columns: 1fr 1fr; }
   .eff-stats { grid-template-columns: 1fr; }
   .proof-grid { grid-template-columns: 1fr 1fr; }
-  .stats-banner-inner { gap: 18px 12px; padding: 32px var(--px); }
-  .stats-banner-val { font-size: 24px; }
 
   /* Section spacing */
   .section-inner { padding: 52px var(--px); }
@@ -3666,6 +3619,5 @@ p { color: var(--text-body); line-height: 1.75; }
   .vid-arrow--prev { left: -24px; }
   .vid-arrow--next { right: -24px; }
   .hc-stat-val { font-size: 16px; }
-  .stats-banner-val { font-size: 22px; }
   .method-card { min-width: 175px; max-width: 175px; }
 }
