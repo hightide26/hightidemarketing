@@ -1,5 +1,39 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ServiceHero from '../../components/ServiceHero.astro';
+
+const stats = [
+  {
+    value: '$29,045',
+    label: 'Direct Attribution Sales',
+    sub: 'tracked from social media content',
+    iconPath: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  },
+  {
+    value: '18.37M+',
+    label: 'Impressions',
+    sub: 'generated across all client platforms',
+    iconPath: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  },
+  {
+    value: '806K',
+    label: 'Video Views',
+    sub: 'across client content this year',
+    iconPath: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  },
+  {
+    value: '6,137',
+    label: 'New Followers',
+    sub: 'gained for clients YTD',
+    iconPath: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  },
+  {
+    value: '741',
+    label: 'Facebook Posts',
+    sub: 'published for clients YTD',
+    iconPath: '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
+  },
+];
 ---
 <Layout
   title="Social Media Management | High Tide Marketing"
@@ -9,43 +43,15 @@ import Layout from '../../layouts/Layout.astro';
 <main>
 
   <!-- ══════════════════════════════════════════
-       HERO
+       HERO — uses shared ServiceHero component
   ══════════════════════════════════════════ -->
-  <section class="svc-pg-hero sm-hero" aria-labelledby="sm-hero-heading">
-    <video class="svc-pg-hero-video" autoplay muted loop playsinline preload="none" aria-hidden="true">
-      <source src="/assets/video/hero.mp4" type="video/mp4">
-    </video>
-    <div class="svc-pg-hero-overlay" aria-hidden="true"></div>
-    <div class="svc-pg-hero-inner">
-      <div class="sm-hero-content">
-        <span class="tag">Social Media Management</span>
-        <h1 id="sm-hero-heading">Content That <em>Converts.</em></h1>
-        <p class="svc-pg-hero-sub">We manage your social media end-to-end — strategy, creation, posting, and paid amplification — built around the buyers most likely to pull the trigger.</p>
-        <div class="svc-pg-hero-ctas">
-          <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book a Free Strategy Call →</a>
-          <a href="/services" class="btn-ghost">See All Services</a>
-        </div>
-      </div>
-      <div class="sm-hero-stats">
-        <div class="sm-hero-stat">
-          <div class="sm-hero-stat-value">$29K+</div>
-          <div class="sm-hero-stat-label">Direct Attribution Sales</div>
-        </div>
-        <div class="sm-hero-stat">
-          <div class="sm-hero-stat-value">18.37M+</div>
-          <div class="sm-hero-stat-label">Total Impressions YTD</div>
-        </div>
-        <div class="sm-hero-stat">
-          <div class="sm-hero-stat-value">806K</div>
-          <div class="sm-hero-stat-label">Video Views YTD</div>
-        </div>
-        <div class="sm-hero-stat">
-          <div class="sm-hero-stat-value">6,137</div>
-          <div class="sm-hero-stat-label">New Followers YTD</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <ServiceHero
+    eyebrow="Social Media Management"
+    headline="Content That *Converts.*"
+    sub="We manage your social media end-to-end — strategy, creation, posting, and paid amplification — built around the buyers most likely to pull the trigger."
+    watermark="Social Media"
+    stats={stats}
+  />
 
   <!-- ══════════════════════════════════════════
        PLATFORM STRIP
