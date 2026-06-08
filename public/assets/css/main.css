@@ -3034,10 +3034,20 @@ p { color: var(--text-body); line-height: 1.75; }
   background: var(--bg-alt);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  padding-top: 52px;
+}
+.sm-platforms-heading {
+  text-align: center;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin: 0 0 40px;
+  padding: 0 var(--px);
 }
 .sm-platforms-inner {
   max-width: var(--max-width); margin: 0 auto;
-  padding: 56px var(--px);
+  padding: 0 var(--px) 56px;
   display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; align-items: center;
 }
 .sm-platform-tile {
