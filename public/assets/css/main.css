@@ -3986,9 +3986,9 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-work-card:hover .sm-work-play { background: var(--sky); border-color: var(--sky); color: #fff; }
 .sm-work-meta { padding: 16px; }
 .sm-work-type {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--sky-dark);
-  display: block; margin-bottom: 4px;
+  font-size: 15px; font-weight: 700;
+  color: var(--navy);
+  display: block;
 }
 .sm-work-client { font-size: 14px; font-weight: 600; color: var(--navy); }
 .sm-work-note {
