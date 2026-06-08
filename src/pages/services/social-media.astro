@@ -136,66 +136,104 @@ const stats = [
   </section>
 
   <!-- ══════════════════════════════════════════
-       THE PROBLEM — BEFORE / AFTER
+       THE PROBLEM — BENTO CARD GRID
   ══════════════════════════════════════════ -->
   <section class="sm-compare" aria-labelledby="compare-heading">
     <div class="section-inner">
       <div class="section-header">
-        <span class="tag">Why It Matters</span>
-        <h2 id="compare-heading">There Is a Better Way to Do This</h2>
+        <span class="tag">The Problem</span>
+        <h2 id="compare-heading">You're Posting.<br>But You're Not Growing.</h2>
+        <p class="section-sub">Most businesses treat social media like a box to check. The result? Wasted hours, empty metrics, and zero ROI you can actually trace.</p>
       </div>
-      <div class="sm-compare-grid">
-        <div class="sm-compare-col sm-compare-col--old">
-          <div class="sm-compare-label">The Old Way</div>
-          <ul class="sm-compare-list">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Posting without a real strategy
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Content that gets likes but not leads
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Guessing what your audience wants to see
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Paying for followers who never become customers
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              No idea which posts actually drive revenue
-            </li>
-          </ul>
+
+      <!-- Problem Cards — staggered bento grid -->
+      <div class="sm-problem-grid">
+
+        <!-- Card 1 -->
+        <div class="sm-problem-card reveal">
+          <div class="sm-problem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h3>No real strategy behind the content</h3>
+          <p>You're creating content every week, but without a documented strategy you're guessing. No content pillars, no funnel awareness, no posting cadence. Just noise the algorithm buries before anyone sees it.</p>
         </div>
-        <div class="sm-compare-col sm-compare-col--new">
-          <div class="sm-compare-label">The High Tide Way</div>
-          <ul class="sm-compare-list">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              Every post tied to a documented content strategy
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              Content engineered to attract in-market buyers
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              High Tide Radar identifies exactly who to target
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              Followers who are actively looking to buy
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              Monthly attribution reports showing real ROI
-            </li>
-          </ul>
+
+        <!-- Card 2 — Featured (center, taller) -->
+        <div class="sm-problem-card sm-problem-card--featured reveal">
+          <div class="sm-problem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <h3>Likes are not leads</h3>
+          <p>Vanity metrics feel good until you check the bank account. Likes, shares, comments — none of it matters if it isn't converting to calls, DMs, or sales. Most content agencies optimize for applause, not revenue.</p>
+          <p class="sm-problem-stat">The average business owner wastes <strong>6–8 hours per week</strong> on social media that generates zero measurable return.</p>
         </div>
+
+        <!-- Card 3 -->
+        <div class="sm-problem-card reveal">
+          <div class="sm-problem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <h3>You're guessing what your audience wants</h3>
+          <p>Without real audience intelligence, you're throwing content at the wall. You don't know what your ideal buyer actually responds to — so you publish and hope. That's not a strategy, that's a coin flip.</p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="sm-problem-card reveal">
+          <div class="sm-problem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Paying for followers who never buy</h3>
+          <p>Follower count is a vanity metric. If your audience isn't made up of in-market buyers, you're growing a number that doesn't move revenue. You need the right 500 people — not the wrong 50,000.</p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="sm-problem-card reveal">
+          <div class="sm-problem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3>No idea which posts actually drive revenue</h3>
+          <p>When a customer buys, can you trace it to a specific post? Most businesses can't. That means you're flying blind — spending hours on content with zero feedback on what's actually working.</p>
+        </div>
+
+      </div><!-- /.sm-problem-grid -->
+
+      <!-- The High Tide Way — solution strip -->
+      <div class="sm-solution-strip">
+        <p class="sm-solution-label">The High Tide Way</p>
+        <ul class="sm-solution-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Every post tied to a documented content strategy
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Content engineered to attract in-market buyers
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            High Tide Radar identifies exactly who to target
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Followers who are actively in-market and ready to buy
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Monthly attribution reports showing real ROI
+          </li>
+        </ul>
       </div>
+
     </div>
   </section>
 
