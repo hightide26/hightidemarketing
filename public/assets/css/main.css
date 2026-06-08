@@ -3052,11 +3052,11 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-platforms-inner {
   max-width: var(--max-width); margin: 0 auto;
   padding: 0 var(--px) 56px;
-  display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; align-items: center;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch;
 }
 .sm-platform-tile {
   display: flex; flex-direction: column; align-items: center; gap: 10px;
-  padding: 28px 20px; border-radius: var(--radius-lg);
+  padding: 32px 24px 28px; border-radius: var(--radius-lg);
   background: #fff; border: 1px solid var(--border);
   text-align: center;
   box-shadow: var(--shadow-xs);
@@ -3064,6 +3064,10 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-platform-icon { color: var(--sky-dark); }
 .sm-platform-name { font-size: 16px; font-weight: 700; color: var(--navy); }
 .sm-platform-type { font-size: 11px; color: var(--sky-dark); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.sm-platform-desc {
+  font-size: 13.5px; color: var(--text-muted); line-height: 1.65;
+  margin: 4px 0 0; text-align: center;
+}
 .sm-platform-radar {
   padding: 28px 28px;
   border-radius: var(--radius-lg); border-left: 3px solid var(--sky);
@@ -3076,6 +3080,66 @@ p { color: var(--text-body); line-height: 1.75; }
   text-transform: uppercase; color: var(--sky-dark); margin-bottom: 10px;
 }
 .sm-platform-radar p { font-size: 14.5px; color: var(--text-muted); line-height: 1.7; margin: 0; }
+
+/* ── Social Media — Philosophy Section ── */
+.sm-philosophy {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 100px var(--px);
+}
+.sm-philosophy .section-inner { max-width: var(--max-width); margin: 0 auto; }
+.sm-philosophy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+}
+.sm-philosophy-content .tag { margin-bottom: 16px; }
+.sm-philosophy-content h2 {
+  font-size: clamp(26px, 2.8vw, 40px); font-weight: 800;
+  color: var(--navy); line-height: 1.2; margin: 0 0 24px;
+}
+.sm-philosophy-content p {
+  font-size: 15.5px; color: var(--text-muted); line-height: 1.75;
+  margin: 0 0 16px;
+}
+.sm-philosophy-content p:last-child { margin-bottom: 0; }
+.sm-philosophy-content strong { color: var(--navy); font-weight: 700; }
+
+.sm-philosophy-stat {
+  display: flex; flex-direction: column;
+  padding: 28px 28px 24px;
+  background: var(--navy);
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+}
+.sm-philosophy-stat-val {
+  font-size: clamp(42px, 5vw, 64px); font-weight: 800;
+  color: var(--sky); letter-spacing: -0.03em; line-height: 1;
+}
+.sm-philosophy-stat-label {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  margin-top: 8px; line-height: 1.4;
+}
+
+.sm-philosophy-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.sm-philosophy-list li {
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.sm-philosophy-list-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--sky-light); color: var(--sky-dark);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.sm-philosophy-list li strong {
+  display: block; font-size: 15px; font-weight: 700;
+  color: var(--navy); margin-bottom: 5px;
+}
+.sm-philosophy-list li p {
+  font-size: 14px; color: var(--text-muted); line-height: 1.65; margin: 0;
+}
 
 /* ── Social Media Page — Comparison ── */
 /* ── Social Media — Problem section (bento card grid) ── */
@@ -3156,7 +3220,7 @@ p { color: var(--text-body); line-height: 1.75; }
   font-size: 13.5px !important;
   color: rgba(255,255,255,0.75) !important;
 }
-.sm-problem-stat strong { color: var(--gold); }
+.sm-problem-stat strong { color: var(--sky); }
 
 /* Solution strip below the problem cards */
 .sm-solution-strip {
@@ -3171,7 +3235,7 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 .sm-solution-label {
   font-size: 11px; font-weight: 800; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--gold);
+  text-transform: uppercase; color: var(--sky);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -3185,7 +3249,7 @@ p { color: var(--text-body); line-height: 1.75; }
   font-size: 13.5px; color: rgba(255,255,255,0.82);
   line-height: 1.4;
 }
-.sm-solution-list li svg { color: var(--gold); flex-shrink: 0; }
+.sm-solution-list li svg { color: var(--sky); flex-shrink: 0; }
 
 /* ── Social Media Page — Capabilities Grid ── */
 .sm-caps {
@@ -3630,6 +3694,8 @@ p { color: var(--text-body); line-height: 1.75; }
   .svc-hub-card h3 { font-size: 17px; }
   .sm-platforms-inner { grid-template-columns: 1fr 1fr; gap: 14px; padding: 40px var(--px); }
   .sm-platform-radar { grid-column: span 2; }
+  .sm-philosophy-grid { grid-template-columns: 1fr; gap: 48px; }
+  .sm-philosophy { padding: 72px var(--px); }
   .sm-problem-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; gap: 14px; }
   .sm-problem-grid .sm-problem-card:nth-child(1) { grid-column: 1; grid-row: auto; }
   .sm-problem-grid .sm-problem-card:nth-child(2) { grid-column: 1 / 3; grid-row: auto; }
@@ -3843,7 +3909,7 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-results .section-inner { max-width: var(--max-width); margin: 0 auto; }
 .sm-results .section-header .tag { margin: 0 auto; }
 .sm-results .section-header h2 { color: #fff; }
-.sm-results .section-header h2 em { color: var(--gold); font-style: normal; }
+.sm-results .section-header h2 em { color: var(--sky); font-style: normal; }
 .sm-results-sub { color: rgba(255,255,255,0.45); font-size: 16px; margin-top: 8px; }
 .sm-results-grid {
   display: grid;
@@ -3864,7 +3930,7 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-result-value {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(26px, 3vw, 42px); font-weight: 800;
-  color: var(--gold); letter-spacing: -0.02em; line-height: 1;
+  color: var(--sky); letter-spacing: -0.02em; line-height: 1;
 }
 .sm-result-label {
   font-size: 13px; font-weight: 700; color: #fff;
@@ -3917,7 +3983,7 @@ p { color: var(--text-body); line-height: 1.75; }
   display: flex; align-items: center; justify-content: center;
   color: #fff; transition: background 0.2s;
 }
-.sm-work-card:hover .sm-work-play { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.sm-work-card:hover .sm-work-play { background: var(--sky); border-color: var(--sky); color: #fff; }
 .sm-work-meta { padding: 16px; }
 .sm-work-type {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
