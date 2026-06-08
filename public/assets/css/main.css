@@ -3309,43 +3309,111 @@ p { color: var(--text-body); line-height: 1.75; }
 .sm-cap-cta-btn:hover { background: var(--gold-hover); transform: translateX(2px); }
 
 /* ── Social Media Page — Package Tiers ── */
+/* ── Packages / Pricing Cards ── */
 .sm-tiers {
-  background: var(--bg);
+  background: var(--bg-alt);
   border-top: 1px solid var(--border);
 }
 .sm-tiers-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 52px; align-items: start;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 52px; align-items: start;
 }
-.sm-tier-card {
-  padding: 36px 32px 32px;
-  background: var(--bg-alt); border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  display: flex; flex-direction: column; gap: 18px;
-  position: relative;
-  transition: box-shadow 0.25s, border-color 0.25s;
+
+/* Plan card base */
+.smp-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1);
 }
-.sm-tier-card--featured {
-  background: var(--sky-tint); border-color: rgba(91,196,232,0.4);
-  box-shadow: var(--shadow-md);
+.smp-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 32px rgba(13,59,82,0.12), 0 24px 64px rgba(13,59,82,0.1);
 }
-.sm-tier-badge {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-  background: var(--sky-dark); color: #fff;
-  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 5px 16px; border-radius: 20px; white-space: nowrap;
+/* Featured card */
+.smp-card--featured {
+  border: 2px solid var(--sky-mid);
+  box-shadow: 0 4px 12px rgba(13,59,82,0.08), 0 12px 40px rgba(13,59,82,0.1);
 }
-.sm-tier-name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
-.sm-tier-tagline { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-.sm-tier-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
-.sm-tier-list li {
-  display: flex; align-items: flex-start; gap: 9px;
+.smp-card--featured:hover {
+  box-shadow: 0 12px 48px rgba(26,138,181,0.18), 0 32px 80px rgba(13,59,82,0.16);
+}
+
+/* Header section */
+.smp-header { padding: 32px 32px 28px; }
+
+/* Tag pill */
+.smp-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 999px; margin-bottom: 16px;
+}
+.smp-tag--std  { background: var(--sky-light); color: var(--sky-dark); }
+.smp-tag--pro  { background: linear-gradient(90deg, var(--sky-dark), var(--sky-mid)); color: #fff; }
+
+/* Plan name + desc */
+.smp-name {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.025em;
+  color: var(--navy); margin-bottom: 8px; line-height: 1.2;
+}
+.smp-desc {
+  font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 26px;
+}
+
+/* CTA buttons */
+.smp-cta {
+  display: block; width: 100%;
+  padding: 14px 24px; border-radius: 8px;
+  font-size: 14.5px; font-weight: 700; text-align: center; text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+.smp-cta--outline {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--navy);
+}
+.smp-cta--outline:hover {
+  border-color: var(--sky-mid); color: var(--sky-dark); background: var(--sky-light);
+}
+.smp-cta--solid {
+  background: var(--gold);
+  border: 2px solid var(--gold);
+  color: var(--navy);
+  box-shadow: 0 4px 16px rgba(240,192,64,0.3);
+}
+.smp-cta--solid:hover {
+  background: var(--gold-hover); border-color: var(--gold-hover);
+  box-shadow: 0 6px 24px rgba(240,192,64,0.45); transform: translateY(-1px);
+}
+
+/* Divider */
+.smp-divider { height: 1px; background: var(--border); margin: 0 32px; }
+
+/* Features section */
+.smp-features { padding: 28px 32px 36px; }
+.smp-features-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 18px;
+}
+.smp-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.smp-list li {
+  display: flex; align-items: flex-start; gap: 10px;
   font-size: 14px; color: var(--text-body); line-height: 1.55;
 }
-.sm-tier-list li svg { flex-shrink: 0; color: var(--sky-dark); margin-top: 2px; }
-.sm-tier-cta { text-align: center; margin-top: 8px; }
+.smp-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; margin-top: 1px;
+}
+.smp-check--std { background: var(--sky-light); color: var(--sky-dark); }
+.smp-check--pro { background: linear-gradient(135deg, var(--sky-dark), var(--sky-mid)); color: #fff; }
+
 .sm-tiers-note {
   text-align: center; font-size: 13px; color: var(--text-faint);
-  margin-top: 28px;
+  margin-top: 32px;
 }
 
 /* ── Social Media Page — Work Showcase ── */
@@ -3704,8 +3772,10 @@ p { color: var(--text-body); line-height: 1.75; }
   .sm-problem-grid .sm-problem-card:nth-child(5) { grid-column: 2; grid-row: auto; }
   .sm-solution-strip { flex-direction: column; gap: 18px; align-items: flex-start; }
   .sm-caps-grid { grid-template-columns: 1fr 1fr; }
-  .sm-tiers-grid { grid-template-columns: 1fr; gap: 40px; }
-  .sm-tier-card { padding: 32px 24px 28px; }
+  .sm-tiers-grid { grid-template-columns: 1fr; gap: 24px; }
+  .smp-header { padding: 28px 24px 22px; }
+  .smp-features { padding: 22px 24px 28px; }
+  .smp-divider { margin: 0 24px; }
   .sm-work-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .svc-hub-cta-inner h2 { font-size: clamp(26px, 7vw, 40px); }
 
