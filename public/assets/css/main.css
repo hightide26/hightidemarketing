@@ -1796,6 +1796,10 @@ p { color: var(--text-body); line-height: 1.75; }
   margin: 0 auto 32px;
   text-align: center;
 }
+.final-cta-actions {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  justify-content: center;
+}
 .final-cta .tag {
   background: rgba(255,255,255,0.08);
   color: rgba(255,255,255,0.7);
