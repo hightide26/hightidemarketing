@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── VIDEO CAROUSELS — Stacked Deck ── */
   document.querySelectorAll('.vid-carousel').forEach(carousel => {
     const slides     = Array.from(carousel.querySelectorAll('.vid-slide'));
+    const clips      = slides.map(s => s.querySelector('video'));
     const dots       = carousel.querySelectorAll('.vid-dot');
     const prevBtn    = carousel.querySelector('.vid-arrow--prev');
     const nextBtn    = carousel.querySelector('.vid-arrow--next');
@@ -166,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAnimating  = false;
     let startX       = 0;
     let isDragging   = false;
+    let carouselVisible = false;
 
     const ALL_CLASSES = ['is-active','is-prev','is-next','is-far-prev','is-far-next','is-hidden','is-exit-left','is-exit-right'];
 
@@ -187,6 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
       dots.forEach((d, i) => d.classList.toggle('active', i === current));
     }
 
+    // Play all clips (side cards stay alive); restart active from 0
+    function playAll() {
+      clips.forEach((v, i) => {
+        if (i === current) { v.currentTime = 0; }
+        v.play().catch(() => {});
+      });
+    }
+
+    function pauseAll() {
+      clips.forEach(v => v.pause());
+    }
+
     function goTo(idx, direction = 'next') {
       if (isAnimating) return;
       idx = ((idx % n) + n) % n;
@@ -196,10 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const exitingSlide = slides[current];
       const exitClass = direction === 'next' ? 'is-exit-left' : 'is-exit-right';
 
-      // Pause exiting video
-      exitingSlide.querySelector('video').pause();
-
-      // Kick off exit animation
+      // Kick off exit animation — exiting video keeps playing (visible as side card)
       exitingSlide.classList.remove(...ALL_CLASSES);
       exitingSlide.classList.add(exitClass);
 
@@ -213,10 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       dots.forEach((d, i) => d.classList.toggle('active', i === current));
 
-      // Play new active video
-      const newVid = slides[current].querySelector('video');
+      // Restart new active video from beginning; others continue looping
+      const newVid = clips[current];
       newVid.currentTime = 0;
-      newVid.play().catch(() => {});
+      if (carouselVisible) newVid.play().catch(() => {});
 
       // Clean up exiting slide after transition
       setTimeout(() => {
@@ -226,9 +237,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 480);
     }
 
-    // Initialise
+    // Initialise slide classes
     applyStates();
-    slides[0].querySelector('video').play().catch(() => {});
+
+    // IntersectionObserver — play all when carousel enters viewport, pause when it leaves
+    const visObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        carouselVisible = entry.isIntersecting;
+        if (carouselVisible) {
+          playAll();
+        } else {
+          pauseAll();
+        }
+      });
+    }, { threshold: 0.2 });
+    visObs.observe(carousel);
 
     prevBtn && prevBtn.addEventListener('click', () => goTo((current - 1 + n) % n, 'prev'));
     nextBtn && nextBtn.addEventListener('click', () => goTo((current + 1) % n, 'next'));
