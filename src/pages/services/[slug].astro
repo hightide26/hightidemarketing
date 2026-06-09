@@ -1,158 +1,300 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ServiceHero from '../../components/ServiceHero.astro';
 import { sanityFetch } from '../../lib/sanity';
 
 const { slug } = Astro.params;
 
-// GROQ query — fetch this service page + dereference testimonials
+// ── GROQ — fetch full service page ────────────────────────────────────────
 const page = await sanityFetch<any>(`
   *[_type == "servicePage" && slug.current == $slug][0]{
-    title,
-    slug,
-    hubDescription,
+    title, slug, hubDescription,
     hero,
-    platforms,
-    radarBlurb,
-    comparison,
-    capabilities,
-    tiers,
+    platformsHeading, platforms,
+    philosophySection,
+    problemSection,
+    whyHtm,
+    capsHeading, capabilities,
+    workSamples,
+    resultsSection,
+    tiersHeading, tiersSub, tiers, tiersNote,
     "testimonials": testimonials[]->{
-      quote,
-      authorName,
-      authorRole,
-      authorCompany,
-      rating
+      quote, authorName, authorRole, authorCompany, rating
     },
-    faq,
+    faqHeading, faq,
+    finalCta,
     seo
   }
 `, { slug });
 
-// 404 if no matching document in Sanity
-if (!page) {
-  return Astro.redirect('/services', 302);
-}
+if (!page) return Astro.redirect('/services', 302);
 
-const title = page.seo?.metaTitle || `${page.title} | High Tide Marketing`;
-const description = page.seo?.metaDescription || page.hero?.subheadline || '';
+const metaTitle = page.seo?.metaTitle || `${page.title} | High Tide Marketing`;
+const metaDesc  = page.seo?.metaDescription || page.hero?.subheadline || '';
 
-// Parse *asterisks* in headline → <em> tags
-function parseHeadline(str: string = '') {
+// ── Helpers ────────────────────────────────────────────────────────────────
+// *word* → <em>word</em>
+function parseEm(str: string = '') {
   return str.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
+
+// Icon map — returns SVG inner path string by key
+const ICONS: Record<string, string> = {
+  // Hero stat icons
+  eye:      '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  video:    '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  users:    '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  facebook: '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
+  // Capability icons
+  calendar:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  'video-sm':   '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  grid:         '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+  pencil:       '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  activity:     '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  search:       '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  chat:         '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
+  chart:        '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  'calendar-cta': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  // Philosophy benefit icons
+  trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  plus:       '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  'bar-chart':'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  // Why HTM icons
+  target:      '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  'bar-chart-2':'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  // Platform icons (looked up by name)
+  platform_facebook:       '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
+  platform_instagram:      '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>',
+  platform_tiktok:         '<path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/>',
+  platform_youtube:        '<path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>',
+  platform_linkedin:       '<path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
+  platform_google_business:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>',
+  platform_default:        '<rect x="2" y="2" width="20" height="20" rx="5"/>',
+};
+
+function iconFor(key: string): string {
+  return ICONS[key] || ICONS['activity'];
+}
+
+function platformIconFor(name: string): string {
+  const k = 'platform_' + (name || '').toLowerCase().replace(/\s+/g, '_');
+  return ICONS[k] || ICONS['platform_default'];
+}
+
+// Build hero stats for ServiceHero component — convert iconKey → iconPath
+const heroStats = (page.hero?.stats || []).map((s: any) => ({
+  value: s.value,
+  label: s.label,
+  sub:   s.sub,
+  iconPath: iconFor(s.iconKey || 'eye'),
+}));
 ---
 
-<Layout title={title} description={description} canonicalPath={`/services/${slug}`}>
+<Layout title={metaTitle} description={metaDesc} canonicalPath={`/services/${slug}`}>
 <main>
 
-  <!-- ── HERO ── -->
-  <section class="svc-pg-hero" aria-labelledby="svc-hero-heading">
-    <div class="svc-pg-hero-overlay" aria-hidden="true"></div>
-    <div class="svc-pg-hero-inner">
-      {page.hero?.tag && <span class="tag">{page.hero.tag}</span>}
-      <h1 id="svc-hero-heading" set:html={parseHeadline(page.hero?.headline || page.title)}></h1>
-      {page.hero?.subheadline && (
-        <p class="svc-pg-hero-sub">{page.hero.subheadline}</p>
-      )}
-      <div class="svc-pg-hero-ctas">
-        <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">
-          Book a Free Strategy Call →
-        </a>
-        <a href="/services" class="btn-ghost">See All Services</a>
-      </div>
-    </div>
-  </section>
+  <!-- ══════════════════════════════════════════
+       HERO — ServiceHero component
+  ══════════════════════════════════════════ -->
+  <ServiceHero
+    eyebrow={page.hero?.eyebrow || page.title}
+    headline={page.hero?.headline || page.title}
+    sub={page.hero?.subheadline || ''}
+    watermark={page.hero?.watermark || page.title}
+    stats={heroStats}
+    ctaLabel={page.hero?.ctaLabel}
+    ctaHref={page.hero?.ctaHref}
+  />
 
-  <!-- ── PLATFORM STRIP (optional) ── -->
+  <!-- ══════════════════════════════════════════
+       PLATFORM STRIP
+  ══════════════════════════════════════════ -->
   {page.platforms?.length > 0 && (
-    <section class="sm-platforms" aria-label="Platforms">
+    <section class="sm-platforms" aria-label="Platforms we manage">
+      <h2 class="sm-platforms-heading">{page.platformsHeading || 'Grow on the platforms that matter.'}</h2>
       <div class="sm-platforms-inner">
         {page.platforms.map((p: any) => (
           <div class="sm-platform-tile">
             <div class="sm-platform-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                <rect x="2" y="2" width="20" height="20" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
+                   set:html={platformIconFor(p.name)}>
               </svg>
             </div>
             <span class="sm-platform-name">{p.name}</span>
             {p.type && <span class="sm-platform-type">{p.type}</span>}
+            {p.description && <p class="sm-platform-desc">{p.description}</p>}
           </div>
         ))}
-        {page.radarBlurb && (
-          <div class="sm-platform-radar">
-            <div class="sm-platform-radar-label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
-              </svg>
-              High Tide Radar
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════════════════════════
+       PHILOSOPHY
+  ══════════════════════════════════════════ -->
+  {page.philosophySection?.heading && (
+    <section class="sm-philosophy" aria-labelledby="philosophy-heading">
+      <div class="section-inner">
+        <div class="sm-philosophy-grid">
+
+          <div class="sm-philosophy-content">
+            {page.philosophySection.tag && <span class="tag">{page.philosophySection.tag}</span>}
+            <h2 id="philosophy-heading" set:html={page.philosophySection.heading.replace(/\n/g, '<br>')}></h2>
+            {(page.philosophySection.paragraphs || []).map((para: string) => (
+              <p set:html={para.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}></p>
+            ))}
+          </div>
+
+          <div class="sm-philosophy-benefits">
+            {(page.philosophySection.statValue || page.philosophySection.statLabel) && (
+              <div class="sm-philosophy-stat">
+                {page.philosophySection.statValue && <span class="sm-philosophy-stat-val">{page.philosophySection.statValue}</span>}
+                {page.philosophySection.statLabel && <span class="sm-philosophy-stat-label">{page.philosophySection.statLabel}</span>}
+              </div>
+            )}
+
+            {page.philosophySection.benefits?.length > 0 && (
+              <ul class="sm-philosophy-list">
+                {page.philosophySection.benefits.map((b: any) => (
+                  <li>
+                    <div class="sm-philosophy-list-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
+                           set:html={iconFor(b.iconKey || 'trending')}>
+                      </svg>
+                    </div>
+                    <div>
+                      <strong>{b.title}</strong>
+                      {b.description && <p>{b.description}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════════════════════════
+       PROBLEM — BENTO CARD GRID
+  ══════════════════════════════════════════ -->
+  {page.problemSection?.cards?.length > 0 && (
+    <section class="sm-compare" aria-labelledby="compare-heading">
+      <div class="section-inner">
+        <div class="section-header">
+          {page.problemSection.tag && <span class="tag">{page.problemSection.tag}</span>}
+          <h2 id="compare-heading" set:html={parseEm(page.problemSection.heading || '')}></h2>
+          {page.problemSection.sub && <p class="section-sub">{page.problemSection.sub}</p>}
+        </div>
+
+        <div class="sm-problem-grid">
+          {page.problemSection.cards.map((card: any) => (
+            <div class={`sm-problem-card${card.featured ? ' sm-problem-card--featured' : ''} reveal`}>
+              <div class="sm-problem-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  {card.featured
+                    ? <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    : <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>
+                  }
+                </svg>
+              </div>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+              {card.featured && card.statText && (
+                <p class="sm-problem-stat">{card.statText}</p>
+              )}
             </div>
-            <p>{page.radarBlurb}</p>
+          ))}
+        </div>
+
+        {(page.problemSection.solutionLabel || page.problemSection.solutionItems?.length > 0) && (
+          <div class="sm-solution-strip">
+            {page.problemSection.solutionLabel && (
+              <p class="sm-solution-label">{page.problemSection.solutionLabel}</p>
+            )}
+            {page.problemSection.solutionItems?.length > 0 && (
+              <ul class="sm-solution-list">
+                {page.problemSection.solutionItems.map((item: string) => (
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>
     </section>
   )}
 
-  <!-- ── COMPARISON (optional) ── -->
-  {(page.comparison?.oldItems?.length > 0 || page.comparison?.newItems?.length > 0) && (
-    <section class="sm-compare" aria-labelledby="compare-heading">
+  <!-- ══════════════════════════════════════════
+       WHY HTM — HIGH TIDE RADAR
+  ══════════════════════════════════════════ -->
+  {page.whyHtm?.heading && (
+    <section class="sm-why" aria-labelledby="why-heading">
       <div class="section-inner">
-        <div class="section-header">
-          <span class="tag">Why It Matters</span>
-          <h2 id="compare-heading">There Is a Better Way to Do This</h2>
+        <div class="sm-why-header">
+          {page.whyHtm.tag && <span class="tag">{page.whyHtm.tag}</span>}
+          <h2 id="why-heading" set:html={parseEm(page.whyHtm.heading)}></h2>
+          {page.whyHtm.sub && <p>{page.whyHtm.sub}</p>}
         </div>
-        <div class="sm-compare-grid">
-          <div class="sm-compare-col sm-compare-col--old">
-            <div class="sm-compare-label">{page.comparison.oldLabel || 'Traditional Marketing'}</div>
-            <ul class="sm-compare-list">
-              {page.comparison.oldItems.map((item: string) => (
-                <li>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        {page.whyHtm.cards?.length > 0 && (
+          <div class="sm-why-grid">
+            {page.whyHtm.cards.map((card: any) => (
+              <div class="sm-why-card reveal">
+                <div class="sm-why-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
+                       set:html={iconFor(card.iconKey || 'target')}>
                   </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
+                </div>
+                <h3>{card.title}</h3>
+                {card.body && <p>{card.body}</p>}
+              </div>
+            ))}
           </div>
-          <div class="sm-compare-col sm-compare-col--new">
-            <div class="sm-compare-label">{page.comparison.newLabel || 'The High Tide Way'}</div>
-            <ul class="sm-compare-list">
-              {page.comparison.newItems.map((item: string) => (
-                <li>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
+        )}
+        {(page.whyHtm.radarLinkLabel || page.whyHtm.radarLinkUrl) && (
+          <div class="sm-why-cta">
+            <a href={page.whyHtm.radarLinkUrl || 'https://hightideradar.com'} target="_blank" rel="noopener noreferrer" class="sm-why-radar-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+              </svg>
+              {page.whyHtm.radarLinkLabel || 'Learn About High Tide Radar →'}
+            </a>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )}
 
-  <!-- ── CAPABILITIES (optional) ── -->
+  <!-- ══════════════════════════════════════════
+       WHAT'S INCLUDED — CAPABILITIES
+  ══════════════════════════════════════════ -->
   {page.capabilities?.length > 0 && (
     <section class="sm-caps" aria-labelledby="caps-heading">
       <div class="section-inner">
-        <div class="section-header">
+        <div class="section-header" style="text-align:center;">
           <span class="tag">What's Included</span>
-          <h2 id="caps-heading">Everything You Need to <em>Dominate</em></h2>
+          <h2 id="caps-heading" set:html={parseEm(page.capsHeading || "Everything You Need to *Dominate*")}></h2>
         </div>
         <div class="sm-caps-grid">
           {page.capabilities.map((cap: any) => (
-            <div class="sm-cap-card reveal">
-              <div class="sm-cap-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            <div class={`sm-cap-card${cap.isCta ? ' sm-cap-card--cta' : ''} reveal`}>
+              <div class={`sm-cap-icon${cap.isCta ? ' sm-cap-icon--gold' : ''}`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
+                     set:html={iconFor(cap.iconKey || 'activity')}>
                 </svg>
               </div>
               <h3>{cap.title}</h3>
               <p>{cap.description}</p>
+              {cap.isCta && cap.ctaLabel && (
+                <a href={cap.ctaHref || '/contact'} class="sm-cap-cta-btn">{cap.ctaLabel}</a>
+              )}
             </div>
           ))}
         </div>
@@ -160,49 +302,124 @@ function parseHeadline(str: string = '') {
     </section>
   )}
 
-  <!-- ── PRICING TIERS (optional) ── -->
+  <!-- ══════════════════════════════════════════
+       WORK SAMPLES
+  ══════════════════════════════════════════ -->
+  {page.workSamples?.items?.length > 0 && (
+    <section class="sm-work" aria-labelledby="work-heading">
+      <div class="section-inner">
+        <div class="section-header" style="text-align:center;">
+          {page.workSamples.tag && <span class="tag">{page.workSamples.tag}</span>}
+          <h2 id="work-heading" set:html={parseEm(page.workSamples.heading || 'Content That *Performs*')}></h2>
+          {page.workSamples.sub && <p class="sm-work-sub">{page.workSamples.sub}</p>}
+        </div>
+        <div class="sm-work-grid">
+          {page.workSamples.items.map((item: any) => (
+            <div class={`sm-work-card sm-work-card--${item.mediaType || 'video'} reveal`}>
+              <div class="sm-work-thumb">
+                {item.mediaType === 'image'
+                  ? <img class="sm-work-img" src={item.src} alt={item.altText || item.label || ''} loading="lazy" />
+                  : (
+                    <video class="sm-work-video" autoplay muted loop playsinline preload="metadata"
+                           aria-label={item.label || ''}>
+                      <source src={item.src} type="video/mp4" />
+                    </video>
+                  )
+                }
+              </div>
+              <div class="sm-work-meta">
+                <span class="sm-work-type">{item.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        {page.workSamples.note && (
+          <div class="sm-work-note">
+            <p>{page.workSamples.note}</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════════════════════════
+       REAL RESULTS — STATS
+  ══════════════════════════════════════════ -->
+  {page.resultsSection?.stats?.length > 0 && (
+    <section class="sm-results" aria-labelledby="results-heading">
+      <div class="section-inner">
+        <div class="section-header" style="text-align:center;">
+          {page.resultsSection.tag && <span class="tag">{page.resultsSection.tag}</span>}
+          <h2 id="results-heading" set:html={parseEm(page.resultsSection.heading || 'Numbers That *Actually Matter*')}></h2>
+          {page.resultsSection.sub && <p class="sm-results-sub">{page.resultsSection.sub}</p>}
+        </div>
+        <div class="sm-results-grid">
+          {page.resultsSection.stats.map((stat: any) => (
+            <div class="sm-result-card reveal">
+              <div class="sm-result-value">{stat.value}</div>
+              <div class="sm-result-label">{stat.label}</div>
+              {stat.sub && <div class="sm-result-sub">{stat.sub}</div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════════════════════════════════
+       PACKAGES
+  ══════════════════════════════════════════ -->
   {page.tiers?.length > 0 && (
     <section class="sm-tiers" aria-labelledby="tiers-heading">
       <div class="section-inner">
         <div class="section-header" style="text-align:center;">
-          <span class="tag">Pricing</span>
-          <h2 id="tiers-heading">Choose the Right Level</h2>
-          <p>All tiers include month-to-month flexibility. No contracts.</p>
+          <span class="tag">Packages</span>
+          <h2 id="tiers-heading">{page.tiersHeading || 'Choose the Right Level'}</h2>
+          {page.tiersSub && <p>{page.tiersSub}</p>}
         </div>
         <div class="sm-tiers-grid">
           {page.tiers.map((tier: any) => (
-            <div class={`sm-tier-card${tier.featured ? ' sm-tier-card--featured' : ''}`}>
-              {tier.badge && <span class="sm-tier-badge">{tier.badge}</span>}
-              <div>
-                <div class="sm-tier-name">{tier.name}</div>
-                {tier.tagline && <div class="sm-tier-tagline">{tier.tagline}</div>}
-              </div>
-              {tier.features?.length > 0 && (
-                <ul class="sm-tier-list">
-                  {tier.features.map((f: string) => (
-                    <li>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div class="sm-tier-cta">
-                <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class={tier.featured ? 'btn-gold' : 'btn-ghost'}>
-                  Schedule a Call for Pricing →
+            <div class={`smp-card${tier.featured ? ' smp-card--featured' : ''}`}>
+              <div class="smp-header">
+                {tier.badge && (
+                  <span class={`smp-tag${tier.featured ? ' smp-tag--pro' : ' smp-tag--std'}`}>{tier.badge}</span>
+                )}
+                <div class="smp-name">{tier.name}</div>
+                {tier.tagline && <p class="smp-desc">{tier.tagline}</p>}
+                <a
+                  href={tier.ctaHref || 'https://calendly.com/hightidemarketing/strategy-call'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={`smp-cta${tier.featured ? ' smp-cta--solid' : ' smp-cta--outline'}`}
+                >
+                  {tier.ctaLabel || 'Schedule a Call for Pricing →'}
                 </a>
+              </div>
+              <div class="smp-divider"></div>
+              <div class="smp-features">
+                {tier.featuresLabel && <p class="smp-features-label">{tier.featuresLabel}</p>}
+                {tier.features?.length > 0 && (
+                  <ul class="smp-list">
+                    {tier.features.map((f: string) => (
+                      <li>
+                        <span class={`smp-check${tier.featured ? ' smp-check--pro' : ' smp-check--std'}`}>✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           ))}
         </div>
-        <p class="sm-tiers-note">Month-to-month. Cancel anytime. Everything we build is yours from day one.</p>
+        {page.tiersNote && <p class="sm-tiers-note">{page.tiersNote}</p>}
       </div>
     </section>
   )}
 
-  <!-- ── TESTIMONIALS (optional) ── -->
+  <!-- ══════════════════════════════════════════
+       TESTIMONIALS
+  ══════════════════════════════════════════ -->
   {page.testimonials?.length > 0 && (
     <section class="testi" aria-labelledby="testi-heading">
       <div class="section-inner">
@@ -216,7 +433,7 @@ function parseHeadline(str: string = '') {
               <p class="testi-stars">{'★'.repeat(t.rating || 5)}</p>
               <p>"{t.quote}"</p>
               <div class="testi-card-footer">
-                <div class="testi-avatar testi-avatar-sm">{t.authorName?.[0] || '?'}</div>
+                <div class="testi-avatar testi-avatar-sm">{(t.authorName || '?')[0]}</div>
                 <div class="testi-attr">
                   <div class="testi-name">{t.authorName}</div>
                   {(t.authorRole || t.authorCompany) && (
@@ -231,18 +448,22 @@ function parseHeadline(str: string = '') {
     </section>
   )}
 
-  <!-- ── FAQ (optional) ── -->
+  <!-- ══════════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════ -->
   {page.faq?.length > 0 && (
     <section class="faq" aria-labelledby="faq-heading">
       <div class="section-inner">
         <div class="faq-layout">
           <div class="faq-left">
             <span class="tag">FAQ</span>
-            <h2 id="faq-heading" class="faq-left h2">Questions About {page.title}</h2>
+            <h2 id="faq-heading" class="faq-left h2">
+              {page.faqHeading || `Questions About ${page.title}`}
+            </h2>
             <p>Don't see your question? <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" style="color:var(--sky-dark);font-weight:600;">Book a call</a> and we'll walk you through it.</p>
           </div>
           <div class="faq-items">
-            {page.faq.map((item: any, i: number) => (
+            {page.faq.map((item: any) => (
               <details class="faq-item reveal" name="faq">
                 <summary class="faq-q">{item.question}</summary>
                 <div class="faq-a"><p>{item.answer}</p></div>
@@ -254,18 +475,29 @@ function parseHeadline(str: string = '') {
     </section>
   )}
 
-  <!-- ── FINAL CTA — always shown ── -->
+  <!-- ══════════════════════════════════════════
+       FINAL CTA — always shown
+  ══════════════════════════════════════════ -->
   <section class="final-cta" aria-labelledby="cta-heading">
     <div class="section-inner">
-      <div class="final-cta-inner">
-        <span class="tag">Ready to Start?</span>
-        <h2 id="cta-heading">Let's Put {page.title} to Work<br>for <em>Your Business.</em></h2>
-        <p>Book a free 30-minute strategy call. We'll look at your current marketing, identify the gaps, and show you exactly what we'd do differently — no pitch deck, no pressure.</p>
-        <div class="final-cta-actions">
-          <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">
-            Book Your Free Strategy Call →
-          </a>
-          <a href="/services" class="btn-ghost">See All Services</a>
+      <div class="final-cta-layout">
+        <div class="final-cta-content">
+          <span class="tag">{page.finalCta?.tag || 'Ready to Start?'}</span>
+          <h2 id="cta-heading" set:html={parseEm(page.finalCta?.heading || `Let's Put ${page.title} to Work for *Your Business.*`)}></h2>
+          <p>{page.finalCta?.sub || "Book a free 30-minute strategy call. We'll audit your current marketing, identify the gaps, and show you exactly what we'd do differently — no pitch deck, no pressure."}</p>
+          <div class="final-cta-actions">
+            <a
+              href={page.finalCta?.primaryHref || 'https://calendly.com/hightidemarketing/strategy-call'}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-gold"
+            >
+              {page.finalCta?.primaryLabel || 'Book Your Free Strategy Call →'}
+            </a>
+            <a href={page.finalCta?.secondaryHref || '/services'} class="btn-ghost">
+              {page.finalCta?.secondaryLabel || 'See All Services'}
+            </a>
+          </div>
         </div>
       </div>
     </div>
