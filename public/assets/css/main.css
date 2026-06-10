@@ -461,29 +461,32 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 .nav-mega-wrap.is-open .mega-chevron { transform: rotate(180deg); }
 
-/* Panel — absolute inside the fixed nav (nav is the containing block) */
+/* Panel — constrained to max-width, centered below the nav */
 .mega-panel {
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
+  left: 50%;
+  width: var(--max-width);
+  max-width: calc(100vw - 2 * var(--px));
   z-index: 200;
   background: rgba(5, 13, 26, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
   box-shadow: 0 32px 80px rgba(0,0,0,0.5);
   /* Hidden state */
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-8px);
+  transform: translateX(-50%) translateY(-8px);
   pointer-events: none;
   transition: opacity 0.22s ease, visibility 0.22s, transform 0.22s ease;
 }
 .nav-mega-wrap.is-open .mega-panel {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
   pointer-events: auto;
 }
 
@@ -600,14 +603,16 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 .mega-feature-cta:hover { gap: 9px; }
 
-/* Footer bar */
+/* "View All" inline link — sits below the services grid inside the panel */
 .mega-panel-footer {
+  display: none; /* no longer used for services; "View All" is now inline */
+}
+.mega-panel--locations .mega-panel-footer {
+  display: block;
   border-top: 1px solid rgba(255,255,255,0.06);
 }
-.mega-panel-footer > * {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 14px var(--px);
+.mega-panel--locations .mega-panel-footer > * {
+  padding: 12px 24px;
 }
 .mega-all-link {
   display: inline-flex;
@@ -620,6 +625,16 @@ p { color: var(--text-body); line-height: 1.75; }
   transition: color 0.2s, gap 0.2s;
 }
 .mega-all-link:hover { color: #fff; gap: 8px; }
+
+/* Inline "View All Services" row inside the panel */
+.mega-all-inline {
+  padding: 12px 16px 4px;
+}
+.mega-all-inline .mega-all-link {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.38);
+}
+.mega-all-inline .mega-all-link:hover { color: rgba(255,255,255,0.75); gap: 8px; }
 
 /* ── Locations mega panel ── */
 .mega-panel--locations .mega-panel-inner { padding: 20px 24px; }
