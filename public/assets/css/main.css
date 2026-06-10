@@ -152,6 +152,28 @@ p { color: var(--text-body); line-height: 1.75; }
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(240,192,64,0.45);
 }
+.btn-ghost-sky {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sky);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: var(--radius-btn);
+  border: 2px solid var(--sky);
+  background: transparent;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-ghost-sky:hover {
+  background: var(--sky);
+  color: #fff;
+}
+
 .btn-ghost {
   display: inline-flex;
   align-items: center;
