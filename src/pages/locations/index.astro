@@ -1,0 +1,170 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityFetch } from '../../lib/sanity';
+
+const locations = await sanityFetch<{city: string; state: string; slug: {current: string}}[]>(
+  `*[_type == "locationPage"] | order(city asc) { city, state, slug }`,
+  {}
+);
+---
+
+<Layout
+  title="Digital Marketing Agency Locations | High Tide Marketing"
+  description="High Tide Marketing serves businesses across the Gulf Coast and Southeast. Find your market and see how we can help you grow."
+  canonicalPath="/locations"
+>
+<main>
+
+  <section class="loci-hero">
+    <div class="section-inner">
+      <span class="tag">Our Markets</span>
+      <h1>We Serve Markets <em>Where It Matters.</em></h1>
+      <p class="loci-hero-sub">High Tide Marketing brings data-powered digital marketing to businesses across the Gulf Coast and Southeast. Select your market below to learn how we can help you grow.</p>
+    </div>
+  </section>
+
+  <section class="loci-grid-section">
+    <div class="section-inner">
+      {locations.length > 0 ? (
+        <div class="loci-grid">
+          {locations.map((loc) => {
+            const cityState = [loc.city, loc.state].filter(Boolean).join(', ');
+            return (
+              <a href={`/locations/${loc.slug.current}`} class="loci-card reveal">
+                <div class="loci-card-pin">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </div>
+                <h2 class="loci-card-city">{loc.city}</h2>
+                {loc.state && <p class="loci-card-state">{loc.state}</p>}
+                <span class="loci-card-cta">
+                  View Market
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="loci-empty">
+          <p>Location pages are coming soon. In the meantime, <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer">book a strategy call</a> and let's talk about your market.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="loci-cta">
+    <div class="section-inner" style="text-align:center;">
+      <span class="tag">Don't See Your Market?</span>
+      <h2>We Can Serve <em>Your Area.</em></h2>
+      <p>High Tide Marketing works with businesses across the country. If you don't see your city listed, reach out — we'd love to learn about your market.</p>
+      <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold" style="margin-top:28px;display:inline-block;">Book a Free Strategy Call →</a>
+    </div>
+  </section>
+
+</main>
+</Layout>
+
+<style>
+.loci-hero {
+  padding: 140px var(--px) 72px;
+  background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, #0d3350 100%);
+  text-align: center;
+}
+.loci-hero .tag { background: rgba(14,165,233,0.15); color: var(--sky); border-color: rgba(14,165,233,0.25); }
+.loci-hero h1 {
+  font-size: clamp(36px, 5.5vw, 68px);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 20px 0 24px;
+}
+.loci-hero h1 em { color: var(--sky); font-style: normal; }
+.loci-hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.65);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.loci-grid-section {
+  padding: 80px var(--px) 96px;
+  background: var(--bg);
+}
+.loci-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.loci-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+}
+.loci-card:hover {
+  box-shadow: 0 8px 32px rgba(13,59,82,0.12);
+  transform: translateY(-3px);
+  border-color: var(--sky);
+}
+.loci-card-pin {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: rgba(14,165,233,0.1);
+  color: var(--sky);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.loci-card-city {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 4px;
+}
+.loci-card-state {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+.loci-card-cta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--sky);
+  margin-top: auto;
+}
+
+.loci-empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+.loci-empty a { color: var(--sky); font-weight: 600; }
+
+.loci-cta {
+  padding: 80px var(--px);
+  background: var(--surface);
+}
+.loci-cta .tag { margin-bottom: 12px; }
+.loci-cta h2 { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 16px; }
+.loci-cta h2 em { color: var(--sky); font-style: normal; }
+.loci-cta p { color: var(--text-muted); max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+@media (max-width: 1024px) {
+  .loci-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 720px) {
+  .loci-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .loci-grid { grid-template-columns: 1fr; }
+}
+</style>

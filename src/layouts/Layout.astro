@@ -1,4 +1,6 @@
 ---
+import { sanityFetch } from '../lib/sanity';
+
 interface Props {
   title: string;
   description: string;
@@ -12,6 +14,12 @@ const {
   canonicalPath = '',
 } = Astro.props;
 const canonical = `https://hightidemarketing.com${canonicalPath}`;
+
+// Dynamic locations for nav dropdown — auto-populates when new location docs are published
+const navLocations = await sanityFetch<{city: string; state: string; slug: {current: string}}[]>(
+  `*[_type == "locationPage"] | order(city asc) { city, state, slug }`,
+  {}
+);
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -146,7 +154,34 @@ const canonical = `https://hightidemarketing.com${canonicalPath}`;
           </div><!-- /.mega-panel -->
         </div><!-- /.nav-mega-wrap -->
 
-        <a href="/#process">Process</a>
+        <!-- ── Locations Mega Menu — dynamic from Sanity ── -->
+        <div class="nav-mega-wrap" id="nav-mega-locations">
+          <button class="nav-mega-btn" aria-expanded="false" aria-haspopup="true">
+            Locations
+            <svg class="mega-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="mega-panel mega-panel--locations">
+            <div class="mega-panel-inner">
+              <div class="mega-locations-list">
+                {navLocations.length > 0 ? navLocations.map((loc) => (
+                  <a href={`/locations/${loc.slug.current}`} class="mega-location-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {loc.city}{loc.state ? `, ${loc.state}` : ''}
+                  </a>
+                )) : (
+                  <p class="mega-locations-empty">Locations coming soon.</p>
+                )}
+              </div>
+            </div>
+            <div class="mega-panel-footer">
+              <a href="/locations" class="mega-all-link">
+                View All Locations
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <a href="/#about">About</a>
         <a href="/blog">Blog</a>
       </nav>
@@ -165,7 +200,7 @@ const canonical = `https://hightidemarketing.com${canonicalPath}`;
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="https://hightideradar.com" target="_blank" rel="noopener noreferrer">High Tide Radar</a>
       <a href="/services">Services</a>
-      <a href="/#process">Process</a>
+      <a href="/locations">Locations</a>
       <a href="/#about">About</a>
       <a href="/blog">Blog</a>
     </nav>
