@@ -9,11 +9,9 @@ const page = await sanityFetch<any>(`
     city, state, slug,
     hero,
     introSection,
-    servicesSection{ tag, heading, sub, "services": services[]->{ title, slug, hubDescription } },
     whySection,
     resultsSection,
     radarSection,
-    "testimonials": testimonials[]->{ quote, authorName, authorRole, authorCompany, rating },
     faqHeading, faq,
     finalCta,
     seo
@@ -31,79 +29,153 @@ function parseEm(str: string = '') {
 }
 
 const ICONS: Record<string, string> = {
-  eye:        '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
-  trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
-  target:     '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-  users:      '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
-  search:     '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-  activity:   '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
-  map:        '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
-  chart:      '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
-  pencil:     '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>',
-  check:      '<polyline points="20 6 9 17 4 12"/>',
-  radar:      '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  eye:      '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  trending: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  target:   '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  users:    '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  search:   '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  map:      '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  chart:    '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  check:    '<polyline points="20 6 9 17 4 12"/>',
+  radar:    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
 };
-
 function iconFor(key: string): string {
   return ICONS[key] || ICONS['activity'];
 }
-
-const heroStats = (page.hero?.stats || []).map((s: any) => ({
-  value: s.value, label: s.label, sub: s.sub, iconKey: s.iconKey,
-}));
 ---
 
 <Layout title={metaTitle} description={metaDesc} canonicalPath={`/locations/${slug}`}>
 <main>
 
-  <!-- ══════════════════════════════════════════
-       HERO
-  ══════════════════════════════════════════ -->
-  <section class="loc-hero">
-    <div class="loc-hero-inner section-inner">
-      {page.hero?.watermark && (
-        <div class="loc-hero-watermark" aria-hidden="true">{page.hero.watermark}</div>
-      )}
-      <div class="loc-hero-content">
-        {page.hero?.eyebrow
-          ? <span class="tag">{page.hero.eyebrow}</span>
-          : <span class="tag">{cityState}</span>
-        }
-        <h1 class="loc-hero-h1" set:html={parseEm(page.hero?.headline || `Digital Marketing Agency in *${page.city}.*`)}></h1>
-        <p class="loc-hero-sub">{page.hero?.subheadline || `Serving ${cityState} businesses with social media, paid ads, SEO, video, and website design — powered by High Tide Radar audience intelligence.`}</p>
-        <div class="loc-hero-actions">
-          <a
-            href={page.hero?.ctaHref || 'https://calendly.com/hightidemarketing/strategy-call'}
-            target="_blank" rel="noopener noreferrer"
-            class="btn-gold"
-          >
+  <!-- ═══════════════════════════════════════════════════
+       HERO — Same cinematic sticky video as homepage
+  ═══════════════════════════════════════════════════ -->
+  <div class="hero-scroll-zone">
+  <section class="hero" aria-label="Hero">
+
+    <!-- Video Background -->
+    <div class="hero-bg-wrap" aria-hidden="true">
+      <video class="hero-bg-video" muted playsinline preload="auto">
+        <source src="/assets/videos/hero-bg.mp4" type="video/mp4">
+      </video>
+    </div>
+    <!-- Dark Overlay -->
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <!-- Main Content -->
+    <div class="hero-inner">
+      <div class="hero-content">
+        <p class="hero-eyebrow">
+          {page.hero?.eyebrow || `Digital Marketing · ${cityState}`}
+        </p>
+        <h1 class="hero-h2" set:html={parseEm(page.hero?.headline || `Digital Marketing Agency in *${page.city}.*`)}></h1>
+        <p class="hero-sub">{page.hero?.subheadline || `High Tide Marketing helps ${page.city} businesses reach in-market buyers by name — before spending a single dollar on advertising. Social media, paid ads, SEO, video, and website design, all powered by High Tide Radar audience intelligence.`}</p>
+        <div class="hero-ctas">
+          <a href={page.hero?.ctaHref || 'https://calendly.com/hightidemarketing/strategy-call'} target="_blank" rel="noopener noreferrer" class="btn-hero">
             {page.hero?.ctaLabel || `Get Your Free ${page.city} Marketing Audit →`}
           </a>
         </div>
       </div>
 
-      {heroStats.length > 0 && (
-        <div class="loc-hero-stats">
-          {heroStats.map((s: any) => (
-            <div class="loc-stat-card">
-              <div class="loc-stat-val">{s.value}</div>
-              <div class="loc-stat-label">{s.label}</div>
-              {s.sub && <div class="loc-stat-sub">{s.sub}</div>}
-            </div>
-          ))}
+      <!-- Stat Cards — same as homepage -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">$33.2M+</div>
+            <div class="hc-stat-label">Revenue Generated</div>
+            <div class="hc-stat-sub">across businesses managed and served</div>
+          </div>
         </div>
-      )}
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">9:1</div>
+            <div class="hc-stat-label">Return on Ad Spend</div>
+            <div class="hc-stat-sub">average ROAS for our clients</div>
+          </div>
+        </div>
+        <div class="hc-stat">
+          <div class="hc-stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="hc-stat-body">
+            <div class="hc-stat-val">140K+</div>
+            <div class="hc-stat-label">Leads Generated</div>
+            <div class="hc-stat-sub">across businesses managed and served</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
 
-  <!-- ══════════════════════════════════════════
-       LOCAL INTRO
-  ══════════════════════════════════════════ -->
+    <!-- H1 Brand Watermark — city name -->
+    <div class="hero-watermark" aria-hidden="true">{page.hero?.watermark || page.city?.toUpperCase()}</div>
+
+    <!-- CLIENT TICKER -->
+    <div class="clients-ticker hero-ticker" role="region" aria-label="Trusted clients">
+      <div class="ticker-scroll-wrap" aria-hidden="true">
+        <div class="ticker-track">
+          <div class="ticker-row">
+            <span>Jordan Air</span><span class="ticker-sep">·</span>
+            <span>Hendrix Air</span><span class="ticker-sep">·</span>
+            <span>Carolina Conditions</span><span class="ticker-sep">·</span>
+            <span>TNT Service Group</span><span class="ticker-sep">·</span>
+            <span>Halderman Real Estate</span><span class="ticker-sep">·</span>
+            <span>LandProz</span><span class="ticker-sep">·</span>
+            <span>Farmland Company</span><span class="ticker-sep">·</span>
+            <span>Farmland by Dirk</span><span class="ticker-sep">·</span>
+            <span>Colten Yager</span><span class="ticker-sep">·</span>
+            <span>C&amp;C Myers</span><span class="ticker-sep">·</span>
+            <span>Mr. Central</span><span class="ticker-sep">·</span>
+            <span>Contego International</span><span class="ticker-sep">·</span>
+            <span>Rural Realty Co</span><span class="ticker-sep">·</span>
+            <span>Christine Estridge</span><span class="ticker-sep">·</span>
+            <span>ProHealth Chiropractic</span><span class="ticker-sep">·</span>
+            <span>Spencer Family Chiropractic</span><span class="ticker-sep">·</span>
+            <span>Bright Windows</span><span class="ticker-sep">·</span>
+            <span>Sumner Homes</span><span class="ticker-sep">·</span>
+            <span>Jordan Air</span><span class="ticker-sep">·</span>
+            <span>Hendrix Air</span><span class="ticker-sep">·</span>
+            <span>Carolina Conditions</span><span class="ticker-sep">·</span>
+            <span>TNT Service Group</span><span class="ticker-sep">·</span>
+            <span>Halderman Real Estate</span><span class="ticker-sep">·</span>
+            <span>LandProz</span><span class="ticker-sep">·</span>
+            <span>Farmland Company</span><span class="ticker-sep">·</span>
+            <span>Farmland by Dirk</span><span class="ticker-sep">·</span>
+            <span>Colten Yager</span><span class="ticker-sep">·</span>
+            <span>C&amp;C Myers</span><span class="ticker-sep">·</span>
+            <span>Mr. Central</span><span class="ticker-sep">·</span>
+            <span>Contego International</span><span class="ticker-sep">·</span>
+            <span>Rural Realty Co</span><span class="ticker-sep">·</span>
+            <span>Christine Estridge</span><span class="ticker-sep">·</span>
+            <span>ProHealth Chiropractic</span><span class="ticker-sep">·</span>
+            <span>Spencer Family Chiropractic</span><span class="ticker-sep">·</span>
+            <span>Bright Windows</span><span class="ticker-sep">·</span>
+            <span>Sumner Homes</span><span class="ticker-sep">·</span>
+          </div>
+        </div>
+      </div>
+      <div class="ticker-badge">
+        <span>Trusted by Growing Businesses Nationwide</span>
+      </div>
+    </div>
+
+  </section>
+  </div><!-- /.hero-scroll-zone -->
+
+  <!-- ═══════════════════════════════════════════════════
+       LOCAL INTRO — city-specific market context
+  ═══════════════════════════════════════════════════ -->
   {page.introSection?.heading && (
-    <section class="loc-intro">
+    <section class="loc-intro-section">
       <div class="section-inner">
         <div class="loc-intro-grid">
-          <div class="loc-intro-content">
+          <div class="loc-intro-content reveal">
             {page.introSection.tag && <span class="tag">{page.introSection.tag}</span>}
             <h2 set:html={parseEm(page.introSection.heading)}></h2>
             {(page.introSection.paragraphs || []).map((p: string) => (
@@ -111,11 +183,11 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
             ))}
           </div>
           {page.introSection.highlights?.length > 0 && (
-            <div class="loc-intro-highlights">
-              {page.introSection.highlights.map((h: any) => (
-                <div class="loc-highlight-card reveal">
+            <div class="loc-highlights-col">
+              {page.introSection.highlights.map((h: any, i: number) => (
+                <div class={`loc-highlight-card reveal d${i + 1}`}>
                   <div class="loc-highlight-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
                          set:html={iconFor(h.iconKey || 'map')}>
                     </svg>
                   </div>
@@ -132,53 +204,186 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       SERVICES
-  ══════════════════════════════════════════ -->
-  {page.servicesSection?.services?.length > 0 && (
-    <section class="loc-services">
-      <div class="section-inner">
-        <div class="section-header" style="text-align:center;">
-          {page.servicesSection.tag && <span class="tag">{page.servicesSection.tag}</span>}
-          <h2 set:html={parseEm(page.servicesSection.heading || `Everything We Offer in *${page.city}*`)}></h2>
-          {page.servicesSection.sub && <p class="section-sub">{page.servicesSection.sub}</p>}
-        </div>
-        <div class="loc-services-grid">
-          {page.servicesSection.services.map((svc: any) => (
-            <a href={`/services/${svc.slug?.current}`} class="loc-svc-card reveal">
-              <h3>{svc.title}</h3>
-              {svc.hubDescription && <p>{svc.hubDescription}</p>}
-              <span class="loc-svc-cta">
-                Learn More
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-              </span>
-            </a>
-          ))}
+  <!-- ═══════════════════════════════════════════════════
+       HIGH TIDE RADAR — same as homepage
+  ═══════════════════════════════════════════════════ -->
+  <section class="radar" id="radar" aria-labelledby="radar-heading">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="tag">{page.radarSection?.tag || 'Proprietary Platform'}</span>
+        <h2 id="radar-heading" set:html={parseEm(page.radarSection?.heading || `We Know Your ${page.city} Buyers<br>Before We Spend *a Dollar.*`)}></h2>
+        <p style="max-width:720px;margin:16px auto 0;text-align:center;font-size:17px;color:var(--text-muted);">{page.radarSection?.sub || `High Tide Radar is our exclusive audience intelligence platform. Before we run a single ad or send a single email in ${page.city}, we identify exactly who your buyers are — their name, company, email, phone, and what they are actively researching right now.`}</p>
+        <div style="margin-top:32px;display:flex;justify-content:center;">
+          <a href="https://hightideradar.com" target="_blank" rel="noopener noreferrer" class="btn-ghost-sky">
+            See How High Tide Radar Works
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
         </div>
       </div>
-    </section>
-  )}
 
-  <!-- ══════════════════════════════════════════
-       WHY HTM IN THIS MARKET
-  ══════════════════════════════════════════ -->
+      <div class="radar-layout">
+        <div class="radar-steps">
+          <div class="radar-step reveal d1">
+            <div class="radar-step-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div>
+              <h4>Identify</h4>
+              <p>Radar reveals who is browsing your site — even when they never fill out a form. We match your traffic against 200M+ verified consumer and business profiles enriched with 300+ demographic, behavioral, and intent attributes, so we know who your buyers are before you spend a dollar.</p>
+            </div>
+          </div>
+          <div class="radar-step reveal d2">
+            <div class="radar-step-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <h4>Profile</h4>
+              <p>Each identified visitor is matched with their contact information, company data, and behavioral signals. We know what they are researching, which competitors they have visited, and how close they are to making a decision.</p>
+            </div>
+          </div>
+          <div class="radar-step reveal d3">
+            <div class="radar-step-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div>
+              <h4>Target</h4>
+              <p>Verified buyers go directly into your campaigns, email sequences, and outreach. You are reaching real people with confirmed interest while that interest is at its highest — not waiting for them to raise their hand.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="radar-segments reveal d2">
+          <div class="radar-segments-label">Audience Intelligence</div>
+          <div class="radar-segments-title">Active Segments Today</div>
+          <div class="radar-segments-pulse">Live · Updated in real time</div>
+          <div class="radar-segments-list">
+            <div class="radar-segment-row">
+              <span class="radar-segment-name">HVAC In-Market Buyers</span>
+              <span class="radar-segment-count">8,941</span>
+            </div>
+            <div class="radar-segment-row">
+              <span class="radar-segment-name">Real Estate Fence-Sitters</span>
+              <span class="radar-segment-count">14,220</span>
+            </div>
+            <div class="radar-segment-row">
+              <span class="radar-segment-name">Competitor Site Visitors</span>
+              <span class="radar-segment-count">5,332</span>
+            </div>
+            <div class="radar-segment-row">
+              <span class="radar-segment-name">Past Customers — Re-engage</span>
+              <span class="radar-segment-count">2,118</span>
+            </div>
+            <div class="radar-segment-row">
+              <span class="radar-segment-name">New Mover Homeowners</span>
+              <span class="radar-segment-count">33,470</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       THE METHOD — 8 channel cards (same as homepage)
+  ═══════════════════════════════════════════════════ -->
+  <section class="method" aria-labelledby="method-heading">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="tag">The Method</span>
+        <h2 id="method-heading">In Front of Your Warmest {page.city} Buyers<br><em>Everywhere They Go.</em></h2>
+        <p style="max-width:720px;margin:16px auto 0;text-align:center;font-size:16px;color:var(--text-muted);">Once Radar identifies your buyers, we make sure they see you on every platform they use. The same warm verified buyer seeing your brand on Google, Meta, TikTok, YouTube, in their inbox, and in their mailbox — until you are the only name they think of when they are ready to buy.</p>
+      </div>
+      <div class="method-grid">
+        <div class="method-card reveal d1">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div>
+          <h3>Social Ads</h3>
+          <p>Paid social served to your identified buyer list — not a lookalike. Personalized to exactly where they are in the buying journey.</p>
+        </div>
+        <div class="method-card reveal d2">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></div>
+          <h3>Social Media</h3>
+          <p>Consistent organic content and community engagement that builds the authority paid ads alone can't create — so your name is already trusted when buyers are ready.</p>
+        </div>
+        <div class="method-card reveal d3">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <h3>YouTube Ads</h3>
+          <p>Pre-roll, skippable, and non-skippable formats keeping you visible on the world's second-largest search engine throughout the entire decision process.</p>
+        </div>
+        <div class="method-card reveal d4">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 8l9 6 9-6"/></svg></div>
+          <h3>Direct Mail</h3>
+          <p>Verified digital audiences turned into physical mail delivered within 48 hours — a tangible touchpoint while buyers are actively considering. A channel most competitors have abandoned.</p>
+        </div>
+        <div class="method-card reveal d1">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h3>Email</h3>
+          <p>Behavior-triggered sequences. When Radar detects intent, we put a personalized message in their inbox while interest is at its highest — turning warm signals into booked appointments.</p>
+        </div>
+        <div class="method-card reveal d2">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <h3>Video</h3>
+          <p>Video isn't an add-on at High Tide — it's the foundation. Scripting, filming, editing, and deployment across every screen, looking like the business buyers already believe you to be.</p>
+        </div>
+        <div class="method-card reveal d3">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <h3>Search Optimization</h3>
+          <p>Long-term organic visibility built around the exact search terms your identified buyers are already using. Technical SEO, content, local authority, and links compounding over time.</p>
+        </div>
+        <div class="method-card reveal d4">
+          <div class="method-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+          <h3>Websites</h3>
+          <p>High-converting websites built to turn identified buyers into booked appointments. Fast, modern, and designed around the exact journey your Radar audience takes before they buy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       WHY IT WORKS — efficiency stats + comparison table
+  ═══════════════════════════════════════════════════ -->
+  <section class="efficiency" aria-labelledby="eff-heading">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="tag">Why It Works</span>
+        <h2 id="eff-heading">Spend Less on People<br>Who Will <em>Never Buy.</em></h2>
+        <p style="margin:16px auto 0;font-size:16.5px;color:var(--text-muted);line-height:1.7;">Stop wasting budget on cold audiences. The same spend goes further — reinvested into better creative, higher-quality campaigns, and results that compound.</p>
+      </div>
+      <div class="eff-stats">
+        <div class="eff-stat reveal d1"><div class="eff-stat-val">9:1</div><div class="eff-stat-label">Avg. ROAS</div></div>
+        <div class="eff-stat reveal d2"><div class="eff-stat-val">40%</div><div class="eff-stat-label">Less Waste</div></div>
+        <div class="eff-stat reveal d3"><div class="eff-stat-val">200M+</div><div class="eff-stat-label">Buyer Profiles</div></div>
+      </div>
+      <div class="eff-table reveal">
+        <div class="eff-table-head">
+          <div>Compared to traditional agencies</div>
+          <div>The Old Way</div>
+          <div>High Tide Enabled</div>
+        </div>
+        <div class="eff-row"><div class="eff-row-label">Audience Targeting</div><div class="eff-row-old">Broad Guesses</div><div class="eff-row-new">Verified Buyer List</div></div>
+        <div class="eff-row"><div class="eff-row-label">Budget Efficiency</div><div class="eff-row-old">40% Wasted</div><div class="eff-row-new">Concentrated on Warm Prospects</div></div>
+        <div class="eff-row"><div class="eff-row-label">Buyer Intelligence</div><div class="eff-row-old">None</div><div class="eff-row-new">Name, Company, Intent Signals</div></div>
+        <div class="eff-row"><div class="eff-row-label">Attribution</div><div class="eff-row-old">Black Box</div><div class="eff-row-new">Real-Time Dashboard</div></div>
+        <div class="eff-row"><div class="eff-row-label">Contract Terms</div><div class="eff-row-old">Lock-In Required</div><div class="eff-row-new">Month-to-Month</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       WHY THIS MARKET — city-specific cards from Sanity
+  ═══════════════════════════════════════════════════ -->
   {page.whySection?.heading && (
-    <section class="loc-why">
+    <section class="whyhtm-loc" aria-labelledby="why-market-heading">
       <div class="section-inner">
-        <div class="loc-why-header">
-          {page.whySection.tag && <span class="tag">{page.whySection.tag}</span>}
-          <h2 set:html={parseEm(page.whySection.heading)}></h2>
-          {page.whySection.sub && <p>{page.whySection.sub}</p>}
+        <div class="section-header reveal" style="text-align:center;">
+          {page.whySection.tag && <span class="tag" style="margin:0 auto;">{page.whySection.tag}</span>}
+          <h2 id="why-market-heading" set:html={parseEm(page.whySection.heading)}></h2>
+          {page.whySection.sub && <p style="max-width:600px;margin:12px auto 0;color:var(--text-muted);">{page.whySection.sub}</p>}
         </div>
         {page.whySection.cards?.length > 0 && (
-          <div class="loc-why-grid">
-            {page.whySection.cards.map((card: any) => (
-              <div class="loc-why-card reveal">
-                <div class="loc-why-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"
-                       set:html={iconFor(card.iconKey || 'target')}>
-                  </svg>
-                </div>
+          <div class="stage-grid" style="margin-top:52px;">
+            {page.whySection.cards.map((card: any, i: number) => (
+              <div class={`stage-card reveal d${i + 1}`}>
+                <div class="stage-num">0{i + 1}</div>
                 <h3>{card.title}</h3>
                 {card.body && <p>{card.body}</p>}
               </div>
@@ -189,107 +394,177 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       LOCAL RESULTS
-  ══════════════════════════════════════════ -->
-  {page.resultsSection?.stats?.length > 0 && (
-    <section class="sm-results loc-results" aria-labelledby="loc-results-heading">
-      <div class="section-inner">
-        <div class="section-header" style="text-align:center;">
-          {page.resultsSection.tag && <span class="tag">{page.resultsSection.tag}</span>}
-          <h2 id="loc-results-heading" set:html={parseEm(page.resultsSection.heading || `Results We've Delivered in *${page.city}*`)}></h2>
-          {page.resultsSection.sub && <p class="sm-results-sub">{page.resultsSection.sub}</p>}
-        </div>
-        <div class="sm-results-grid">
-          {page.resultsSection.stats.map((stat: any) => (
-            <div class="sm-result-card reveal">
-              <div class="sm-result-value">{stat.value}</div>
-              <div class="sm-result-label">{stat.label}</div>
-              {stat.sub && <div class="sm-result-sub">{stat.sub}</div>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <!-- ══════════════════════════════════════════
-       HIGH TIDE RADAR
-  ══════════════════════════════════════════ -->
-  <section class="loc-radar">
+  <!-- ═══════════════════════════════════════════════════
+       PROCESS — same 3 steps as homepage
+  ═══════════════════════════════════════════════════ -->
+  <section class="process" id="process" aria-labelledby="process-heading">
     <div class="section-inner">
-      <div class="loc-radar-inner">
-        <div class="loc-radar-content">
-          <span class="tag">{page.radarSection?.tag || 'Proprietary Platform'}</span>
-          <h2 set:html={parseEm(page.radarSection?.heading || `We Know Who Your *${page.city}* Buyers Are — Before We Start.`)}></h2>
-          <p>{page.radarSection?.sub || `High Tide Radar is our exclusive audience intelligence platform. Before we run a single ad or post a single piece of content in ${page.city}, we identify exactly who your local buyers are — their name, company, and what they're actively researching right now.`}</p>
-          <a href="https://hightideradar.com" target="_blank" rel="noopener noreferrer" class="loc-radar-cta">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-            {page.radarSection?.ctaLabel || 'Explore High Tide Radar'}
-          </a>
+      <div class="section-header reveal" style="text-align:center;">
+        <span class="tag" style="margin:0 auto;">The Process</span>
+        <h2 id="process-heading">Getting Started<br>Is <em>Simple.</em></h2>
+      </div>
+      <div class="process-track">
+        <div class="process-spine" aria-hidden="true">
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>01</span></div>
+            <div class="process-spine-half process-spine-half--right"><div class="process-spine-fill"></div></div>
+          </div>
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"><div class="process-spine-fill"></div></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>02</span></div>
+            <div class="process-spine-half process-spine-half--right"><div class="process-spine-fill"></div></div>
+          </div>
+          <div class="process-spine-node">
+            <div class="process-spine-half process-spine-half--left"><div class="process-spine-fill"></div></div>
+            <div class="process-badge"><div class="process-badge-ring"></div><span>03</span></div>
+            <div class="process-spine-half process-spine-half--right"></div>
+          </div>
         </div>
-        <div class="loc-radar-visual" aria-hidden="true">
-          <div class="loc-radar-ring loc-radar-ring--1"></div>
-          <div class="loc-radar-ring loc-radar-ring--2"></div>
-          <div class="loc-radar-ring loc-radar-ring--3"></div>
-          <div class="loc-radar-dot"></div>
-          <div class="loc-radar-sweep"></div>
+        <div class="process-cards">
+          <div class="process-card">
+            <p class="process-card-label">Step 01</p>
+            <h3>Free Discovery Call</h3>
+            <p>We learn your {page.city} business, your goals, and where your current marketing is bleeding money. No pitch deck. No pressure. Just an honest conversation about what is working and what is not.</p>
+          </div>
+          <div class="process-card">
+            <p class="process-card-label">Step 02</p>
+            <h3>Custom Radar-Backed Strategy</h3>
+            <p>We run your audience through Radar, identify who is in the {page.city} market right now, analyze your competitors, and build a targeting plan specific to your business. Not a template. A strategy built around your actual buyers.</p>
+          </div>
+          <div class="process-card">
+            <p class="process-card-label">Step 03</p>
+            <h3>Execute, Optimize and Grow</h3>
+            <p>We launch across every channel, optimize daily, and report with complete transparency. You see exactly where every dollar is going and what it is returning. You own everything we build — every asset, every account, every day.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       TESTIMONIALS
-  ══════════════════════════════════════════ -->
-  {page.testimonials?.length > 0 && (
-    <section class="testi" aria-labelledby="loc-testi-heading">
-      <div class="section-inner">
-        <div class="section-header" style="text-align:center;">
-          <span class="tag">Client Results</span>
-          <h2 id="loc-testi-heading">What {page.city} Businesses Say</h2>
+  <!-- ═══════════════════════════════════════════════════
+       WHY HIGH TIDE — same as homepage with team photo
+  ═══════════════════════════════════════════════════ -->
+  <section class="whyhtm" id="about" aria-labelledby="why-heading">
+    <div class="section-inner">
+      <div class="whyhtm-layout">
+        <div class="whyhtm-content reveal">
+          <span class="tag">Why High Tide</span>
+          <h2 id="why-heading">Your {page.city} Business Deserves a<br>Partner, Not <em>a Vendor.</em></h2>
+          <p>At High Tide, we treat your brand like it is our own. That means one unified strategy, complete transparency into everything we do, and video at the center — because nothing builds trust with your audience faster.</p>
+          <p style="margin-bottom:28px;">You will always know your strategist by name, always see your numbers in real time, and never feel locked in. We earn your business every single month.</p>
+          <ul class="whyhtm-bullets">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Dedicated strategist on your account</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Month-to-month with no long-term commitment</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Real-time dashboard access</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Video-first strategy built into everything</li>
+          </ul>
+          <a href="https://link.hightidemarketing.com/widget/booking/sXdKdOFB4G5tFHTlSwHf" target="_blank" rel="noopener" class="btn-strategy-cta">
+            Book a Free Strategy Call
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div>
-        <div class="testi-grid">
-          {page.testimonials.map((t: any) => (
-            <div class="testi-card reveal">
-              <p class="testi-stars">{'★'.repeat(t.rating || 5)}</p>
-              <p>"{t.quote}"</p>
-              <div class="testi-card-footer">
-                <div class="testi-avatar testi-avatar-sm">{(t.authorName || '?')[0]}</div>
-                <div class="testi-attr">
-                  <div class="testi-name">{t.authorName}</div>
-                  {(t.authorRole || t.authorCompany) && (
-                    <div class="testi-role">{[t.authorRole, t.authorCompany].filter(Boolean).join(', ')}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+        <div class="whyhtm-photo reveal d2">
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663413789731/TgRJUY6r4EnBN9Baf5jLY4/why-hightide-team_6ce8660c.jpg" alt="High Tide Marketing team" loading="lazy">
+          <div class="whyhtm-photo-tag">
+            <strong>Month-to-Month</strong>
+            We earn your business every month
+          </div>
         </div>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════
-       FAQ
-  ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════
+       TESTIMONIALS — same as homepage
+  ═══════════════════════════════════════════════════ -->
+  <section class="testimonials" aria-labelledby="testi-heading">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="tag">Testimonials</span>
+        <h2 id="testi-heading">Chosen by Growing Businesses<br><em>Nationwide.</em></h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal d1">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Thank you so much to Chantz and his team at High Tide Marketing for the website. It was delivered extremely fast and I had zero revisions when it was complete. Highly recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">CE</div>
+            <div><div class="testi-name">Christine Estridge</div><div class="testi-role">Google Review</div></div>
+          </div>
+        </div>
+        <div class="testi-card reveal d2">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Chantz and his team did an outstanding job delivering a site that matched my vision and helped drive leads to my business. They continue to keep my site up to date. 10/10 would recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">NS</div>
+            <div><div class="testi-name">Nolan Sampson</div><div class="testi-role">Google Review</div></div>
+          </div>
+        </div>
+        <div class="testi-card reveal d3">
+          <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+          <p>"Chantz and his team at High Tide Marketing were great to work with. His communication and attention to detail was outstanding. He really took the time to understand exactly what I needed. Highly recommend."</p>
+          <div class="testi-card-footer">
+            <div class="testi-avatar testi-avatar-sm">AH</div>
+            <div><div class="testi-name">Alec Horton</div><div class="testi-role">Brokerage Owner</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       STAGE WHEEL — same as homepage
+  ═══════════════════════════════════════════════════ -->
+  <section class="stage" aria-labelledby="stage-heading">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="tag">The Stage Wheel</span>
+        <h2 id="stage-heading">Why High Tide<br>Is <em>Different.</em></h2>
+      </div>
+      <div class="stage-grid">
+        <div class="stage-card reveal d1">
+          <div class="stage-num">01</div>
+          <h3>Identify</h3>
+          <p>We identify potential prospects based on their search intent — finding the people who are actively researching what you offer before you spend a single dollar.</p>
+        </div>
+        <div class="stage-card reveal d2">
+          <div class="stage-num">02</div>
+          <h3>Advertise</h3>
+          <p>We run ads that drive volume to your website — putting your brand in front of verified, in-market buyers across Google, Meta, YouTube, and more.</p>
+        </div>
+        <div class="stage-card reveal d3">
+          <div class="stage-num">03</div>
+          <h3>Retarget</h3>
+          <p>We capture data on website users and retarget them with advertising, direct mail, and other channels — so we are only going after people who are likely to buy your product or service.</p>
+        </div>
+      </div>
+      <p class="stage-cycle-note">Continuous cycle — each stage feeds the next</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       FAQ — city-specific from Sanity, same accordion style
+  ═══════════════════════════════════════════════════ -->
   {page.faq?.length > 0 && (
     <section class="faq" aria-labelledby="loc-faq-heading">
       <div class="section-inner">
         <div class="faq-layout">
-          <div class="faq-left">
+          <div class="faq-left reveal">
             <span class="tag">FAQ</span>
-            <h2 id="loc-faq-heading" class="faq-left h2">
-              {page.faqHeading || `Questions About HTM in ${page.city}`}
-            </h2>
-            <p>Don't see your question? <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" style="color:var(--sky-dark);font-weight:600;">Book a call</a> and we'll walk you through it.</p>
+            <h2 id="loc-faq-heading">{page.faqHeading || `Questions About Marketing in ${page.city}`}</h2>
+            <p>Still have questions? Book a free call — no pitch, just answers.</p>
+            <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book a Free Call</a>
           </div>
-          <div class="faq-items">
+          <div class="faq-right reveal d1">
             {page.faq.map((item: any) => (
-              <details class="faq-item reveal" name="faq">
-                <summary class="faq-q">{item.question}</summary>
-                <div class="faq-a"><p>{item.answer}</p></div>
-              </details>
+              <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                  {item.question}
+                  <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a" role="region">{item.answer}</div>
+              </div>
             ))}
           </div>
         </div>
@@ -297,30 +572,30 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       FINAL CTA
-  ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════
+       FINAL CTA — booking widget, same as homepage
+  ═══════════════════════════════════════════════════ -->
   <section class="final-cta" aria-labelledby="loc-cta-heading">
     <div class="section-inner">
       <div class="final-cta-layout">
-        <div class="final-cta-content">
+        <div class="final-cta-content reveal">
           <span class="tag">{page.finalCta?.tag || `Serving ${cityState}`}</span>
           <h2 id="loc-cta-heading" set:html={parseEm(page.finalCta?.heading || `Let's Grow Your ${page.city} Business — *Starting Now.*`)}></h2>
           <p>{page.finalCta?.sub || `Book a free 30-minute strategy call. We'll audit your current marketing, identify the gaps, and show you exactly what we'd do differently for your ${page.city} market.`}</p>
-          <div class="final-cta-actions">
-            <a
-              href={page.finalCta?.primaryHref || 'https://calendly.com/hightidemarketing/strategy-call'}
-              target="_blank" rel="noopener noreferrer"
-              class="btn-gold"
-            >
-              {page.finalCta?.primaryLabel || `Book Your Free ${page.city} Strategy Call →`}
-            </a>
-            {(page.finalCta?.secondaryLabel || page.finalCta?.secondaryHref) && (
-              <a href={page.finalCta?.secondaryHref || '/services'} class="btn-ghost">
-                {page.finalCta?.secondaryLabel || 'See All Services'}
-              </a>
-            )}
-          </div>
+          <ul class="final-cta-trust">
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>No long-term contracts</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>You own everything we build</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Full transparency, real-time reporting</li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Video-first strategy built in from day one</li>
+          </ul>
+        </div>
+        <div class="final-cta-form reveal d2">
+          <iframe
+            src="https://api.leadconnectorhq.com/widget/booking/ZVd5T6AF0kg90QYwj8jJ"
+            style="width:100%;border:none;overflow:hidden;"
+            scrolling="no"
+            id="ZVd5T6AF0kg90QYwj8jJ_loc"
+          ></iframe>
         </div>
       </div>
     </div>
@@ -330,249 +605,58 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
 </Layout>
 
 <style>
-/* ── Location Hero ── */
-.loc-hero {
-  position: relative;
-  overflow: hidden;
-  padding: 140px var(--px) 80px;
-  background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, #0d3350 100%);
-}
-.loc-hero-watermark {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(80px, 18vw, 220px);
-  font-weight: 900;
-  color: rgba(255,255,255,0.04);
-  white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: -0.04em;
-  user-select: none;
-}
-.loc-hero-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
-}
-.loc-hero-content .tag { background: rgba(14,165,233,0.15); color: var(--sky); border-color: rgba(14,165,233,0.25); }
-.loc-hero-h1 {
-  font-size: clamp(36px, 5vw, 64px);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  margin: 20px 0 24px;
-}
-.loc-hero-h1 em { color: var(--sky); font-style: normal; }
-.loc-hero-sub {
-  font-size: 17px;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.7;
-  max-width: 520px;
-  margin-bottom: 36px;
-}
-.loc-hero-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-.loc-stat-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 20px 18px;
-}
-.loc-stat-val {
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 900;
-  color: var(--sky);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.loc-stat-label {
-  font-size: 13px;
-  color: rgba(255,255,255,0.7);
-  margin-top: 6px;
-  font-weight: 600;
-}
-.loc-stat-sub {
-  font-size: 11.5px;
-  color: rgba(255,255,255,0.4);
-  margin-top: 2px;
-}
-
-/* ── Local Intro ── */
-.loc-intro {
+/* ── Local Intro Section ── */
+.loc-intro-section {
   padding: 96px var(--px);
   background: var(--bg);
 }
 .loc-intro-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  gap: 72px;
   align-items: start;
 }
-.loc-intro-content h2 { margin: 16px 0 24px; }
-.loc-intro-content p { color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
-.loc-intro-highlights { display: flex; flex-direction: column; gap: 20px; }
+.loc-intro-content .tag { margin-bottom: 16px; }
+.loc-intro-content h2 { margin: 0 0 24px; }
+.loc-intro-content p { color: var(--text-muted); line-height: 1.75; margin-bottom: 16px; font-size: 16.5px; }
+.loc-highlights-col { display: flex; flex-direction: column; gap: 18px; }
 .loc-highlight-card {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 20px;
+  gap: 18px;
+  padding: 22px 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.loc-highlight-card:hover {
+  border-color: rgba(14,165,233,0.3);
+  box-shadow: 0 4px 20px rgba(14,165,233,0.06);
 }
 .loc-highlight-icon {
-  width: 40px; height: 40px; flex-shrink: 0;
-  border-radius: 8px;
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 10px;
   background: rgba(14,165,233,0.1);
   color: var(--sky);
   display: flex; align-items: center; justify-content: center;
 }
-.loc-highlight-card strong { display: block; font-size: 15px; color: var(--navy); margin-bottom: 4px; }
-.loc-highlight-card p { font-size: 13.5px; color: var(--text-muted); margin: 0; line-height: 1.6; }
+.loc-highlight-card strong { display: block; font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+.loc-highlight-card p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.65; }
 
-/* ── Services Grid ── */
-.loc-services {
-  padding: 96px var(--px);
-  background: var(--surface);
-}
-.loc-services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 48px;
-}
-.loc-svc-card {
-  display: flex;
-  flex-direction: column;
-  padding: 28px 24px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  text-decoration: none;
-  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
-}
-.loc-svc-card:hover {
-  box-shadow: 0 8px 32px rgba(13,59,82,0.1);
-  transform: translateY(-2px);
-  border-color: var(--sky);
-}
-.loc-svc-card h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
-.loc-svc-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; flex: 1; margin: 0 0 20px; }
-.loc-svc-cta {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 13.5px; font-weight: 600; color: var(--sky);
-  margin-top: auto;
-}
-
-/* ── Why HTM Section ── */
-.loc-why {
-  padding: 96px var(--px);
-  background: var(--navy-deep);
-}
-.loc-why-header { text-align: center; margin-bottom: 52px; }
-.loc-why-header .tag { background: rgba(14,165,233,0.15); color: var(--sky); border-color: rgba(14,165,233,0.25); }
-.loc-why-header h2 { color: #fff; margin: 16px 0 12px; }
-.loc-why-header h2 em { color: var(--sky); font-style: normal; }
-.loc-why-header p { color: rgba(255,255,255,0.6); max-width: 560px; margin: 0 auto; }
-.loc-why-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.loc-why-card {
-  padding: 28px 24px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius-lg);
-  transition: background 0.2s;
-}
-.loc-why-card:hover { background: rgba(255,255,255,0.07); }
-.loc-why-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  background: rgba(14,165,233,0.12);
-  color: var(--sky);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 18px;
-}
-.loc-why-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-.loc-why-card p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin: 0; }
-
-/* ── Radar Section ── */
-.loc-radar {
+/* ── Why This Market (city-specific cards) ── */
+.whyhtm-loc {
   padding: 96px var(--px);
   background: var(--bg);
 }
-.loc-radar-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-.loc-radar-content .tag { margin-bottom: 16px; }
-.loc-radar-content h2 { margin-bottom: 20px; }
-.loc-radar-content p { color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; }
-.loc-radar-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--sky); font-weight: 600; font-size: 14.5px;
-  text-decoration: none;
-  transition: gap 0.2s;
-}
-.loc-radar-cta:hover { gap: 12px; }
-/* Animated radar rings */
-.loc-radar-visual {
-  position: relative;
-  width: 280px; height: 280px;
-  margin: 0 auto;
-}
-.loc-radar-ring {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px solid rgba(14,165,233,0.2);
-}
-.loc-radar-ring--1 { width: 100%; height: 100%; }
-.loc-radar-ring--2 { width: 66%; height: 66%; border-color: rgba(14,165,233,0.3); }
-.loc-radar-ring--3 { width: 33%; height: 33%; border-color: rgba(14,165,233,0.5); }
-.loc-radar-dot {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  background: var(--sky);
-  box-shadow: 0 0 20px var(--sky);
-}
-.loc-radar-sweep {
-  position: absolute; top: 50%; left: 50%;
-  width: 50%; height: 1px;
-  background: linear-gradient(to right, var(--sky), transparent);
-  transform-origin: left center;
-  animation: radar-sweep 3s linear infinite;
-}
-@keyframes radar-sweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
+.whyhtm-loc .section-header h2 em { color: var(--sky); font-style: normal; }
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-  .loc-hero-inner { grid-template-columns: 1fr; gap: 40px; }
-  .loc-hero-stats { grid-template-columns: repeat(4, 1fr); }
-  .loc-intro-grid { grid-template-columns: 1fr; gap: 40px; }
-  .loc-services-grid { grid-template-columns: 1fr 1fr; }
-  .loc-why-grid { grid-template-columns: 1fr 1fr; }
-  .loc-radar-inner { grid-template-columns: 1fr; }
-  .loc-radar-visual { display: none; }
+  .loc-intro-grid { grid-template-columns: 1fr; gap: 48px; }
 }
 @media (max-width: 640px) {
-  .loc-hero { padding: 100px var(--px) 60px; }
-  .loc-hero-stats { grid-template-columns: 1fr 1fr; }
-  .loc-services-grid { grid-template-columns: 1fr; }
-  .loc-why-grid { grid-template-columns: 1fr; }
+  .loc-intro-section { padding: 72px var(--px); }
+  .whyhtm-loc { padding: 72px var(--px); }
 }
 </style>
