@@ -1942,8 +1942,8 @@ p { color: var(--text-body); line-height: 1.75; }
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+  gap: 40px;
   margin-bottom: 52px;
 }
 .footer-brand img { height: 72px; width: auto; opacity: 0.92; margin-bottom: 22px; filter: brightness(0) invert(1); }
@@ -3536,8 +3536,8 @@ p { color: var(--text-body); line-height: 1.75; }
   .testi-grid { grid-template-columns: repeat(2, 1fr); }
   .faq-layout { grid-template-columns: 1fr; gap: 40px; }
   .faq-left { position: static; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
-  .footer-brand { grid-column: span 2; }
+  .footer-grid { grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+  .footer-brand { grid-column: span 3; }
   .wwd-grid { grid-template-columns: repeat(2, 1fr); }
   .radar-layout { grid-template-columns: 1fr; }
   .method-grid { grid-template-columns: repeat(2, 1fr); }

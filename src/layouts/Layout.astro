@@ -245,6 +245,23 @@ const navLocations = await sanityFetch<{city: string; state: string; slug: {curr
           </ul>
         </div>
         <div class="footer-col">
+          <h4>Markets</h4>
+          <ul>
+            {navLocations.length > 0 ? (
+              <>
+                {navLocations.slice(0, 8).map((loc) => (
+                  <li><a href={`/locations/${loc.slug.current}`}>{loc.city}{loc.state ? `, ${loc.state}` : ''}</a></li>
+                ))}
+                {navLocations.length > 8 && (
+                  <li><a href="/locations" style="color:var(--sky-dark);font-weight:600;">View All Markets →</a></li>
+                )}
+              </>
+            ) : (
+              <li><a href="/locations">View All Markets</a></li>
+            )}
+          </ul>
+        </div>
+        <div class="footer-col">
           <h4>Contact</h4>
           <ul>
             <li><a href="tel:+19122315182">(912) 231-5182</a></li>
