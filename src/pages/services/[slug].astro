@@ -139,7 +139,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
 
           <div class="sm-philosophy-content">
             {page.philosophySection.tag && <span class="tag">{page.philosophySection.tag}</span>}
-            <h2 id="philosophy-heading" set:html={page.philosophySection.heading.replace(/\n/g, '<br>')}></h2>
+            <h2 id="philosophy-heading" set:html={parseEm(page.philosophySection.heading || '').replace(/\n/g, '<br>')}></h2>
             {(page.philosophySection.paragraphs || []).map((para: string) => (
               <p set:html={para.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}></p>
             ))}
