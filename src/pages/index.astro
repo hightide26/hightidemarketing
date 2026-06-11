@@ -1,4 +1,12 @@
 ---
+import { sanityFetch } from '../lib/sanity';
+
+// Dynamic locations for nav dropdown + footer — auto-populates when new
+// location docs are published in Sanity.
+const navLocations = await sanityFetch<{city: string; state: string; slug: {current: string}}[]>(
+  `*[_type == "locationPage"] | order(city asc) { city, state, slug }`,
+  {}
+);
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -176,11 +184,43 @@
           </div><!-- /.mega-panel -->
         </div><!-- /.nav-mega-wrap -->
 
+        <!-- ── Locations Mega Menu — dynamic from Sanity ── -->
+        <div class="nav-mega-wrap" id="nav-mega-locations">
+          <button class="nav-mega-btn" aria-expanded="false" aria-haspopup="true">
+            Locations
+            <svg class="mega-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="mega-panel mega-panel--locations">
+            <div class="mega-panel-inner">
+              <div class="mega-locations-list">
+                <a href="/locations" class="mega-location-link mega-location-all">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7"/></svg>
+                  Browse All Markets
+                </a>
+                {navLocations.length > 0 ? navLocations.map((loc) => (
+                  <a href={`/locations/${loc.slug.current}`} class="mega-location-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {loc.city}{loc.state ? `, ${loc.state}` : ''}
+                  </a>
+                )) : (
+                  <p class="mega-locations-empty">Locations coming soon.</p>
+                )}
+              </div>
+            </div>
+            <div class="mega-panel-footer">
+              <a href="/locations" class="mega-all-link">
+                View All Locations
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </div>
+        </div><!-- /.nav-mega-wrap -->
+
         <a href="#process">Process</a>
         <a href="#about">About</a>
         <a href="/blog">Blog</a>
       </nav>
-      <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold nav-cta">Book a Strategy Call</a>
+      <a href="#book" class="btn-gold nav-cta">Book a Strategy Call</a>
       <button class="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" id="hamburger">
         <span></span><span></span><span></span>
       </button>
@@ -195,11 +235,12 @@
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="https://hightideradar.com" target="_blank" rel="noopener noreferrer">High Tide Radar</a>
       <a href="/services">Services</a>
+      <a href="/locations">Locations</a>
       <a href="#process">Process</a>
       <a href="#about">About</a>
       <a href="/blog">Blog</a>
     </nav>
-    <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book a Strategy Call</a>
+    <a href="#book" class="btn-gold">Book a Strategy Call</a>
   </div>
 
   <main>
@@ -982,7 +1023,7 @@
     </section>
 
     <!-- FINAL CTA -->
-    <section class="final-cta" aria-labelledby="cta-heading">
+    <section class="final-cta" id="book" aria-labelledby="cta-heading">
       <div class="section-inner">
         <div class="final-cta-layout">
 
@@ -1045,11 +1086,11 @@
         <div class="footer-col">
           <h4>Services</h4>
           <ul>
-            <li><a href="#services">Social Media</a></li>
-            <li><a href="#services">Video Content</a></li>
-            <li><a href="#services">Website Design</a></li>
-            <li><a href="#services">Paid Ads</a></li>
-            <li><a href="#services">SEO</a></li>
+            <li><a href="/services/social-media">Social Media</a></li>
+            <li><a href="/services/video">Video Content</a></li>
+            <li><a href="/services/websites">Website Design</a></li>
+            <li><a href="/services/paid-ads">Paid Ads</a></li>
+            <li><a href="/services/seo">SEO</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -1062,11 +1103,20 @@
           </ul>
         </div>
         <div class="footer-col">
+          <h4><a href="/locations" style="color:inherit;text-decoration:none;">Markets</a></h4>
+          <ul>
+            {navLocations.slice(0, 7).map((loc) => (
+              <li><a href={`/locations/${loc.slug.current}`}>{loc.city}{loc.state ? `, ${loc.state}` : ''}</a></li>
+            ))}
+            <li><a href="/locations" style="color:var(--sky);font-weight:600;">View All Markets →</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
           <h4>Contact</h4>
           <ul>
             <li><a href="tel:+19122315182">(912) 231-5182</a></li>
             <li><a href="mailto:Support@HighTideMarketing.com">Support@HighTideMarketing.com</a></li>
-            <li><a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer">Book a Strategy Call</a></li>
+            <li><a href="#book">Book a Strategy Call</a></li>
           </ul>
         </div>
       </div>

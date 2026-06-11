@@ -6,12 +6,16 @@ interface Props {
   description: string;
   ogImage?: string;
   canonicalPath?: string;
+  bookHref?: string;
 }
 const {
   title,
   description,
   ogImage = 'https://hightidemarketing.com/assets/images/og-image.jpg',
   canonicalPath = '',
+  // Where the "Book a Strategy Call" buttons point. Defaults to the homepage
+  // booking embed; pages with their own on-page embed pass "#book".
+  bookHref = '/#book',
 } = Astro.props;
 const canonical = `https://hightidemarketing.com${canonicalPath}`;
 
@@ -189,7 +193,7 @@ const navLocations = await sanityFetch<{city: string; state: string; slug: {curr
         <a href="/#about">About</a>
         <a href="/blog">Blog</a>
       </nav>
-      <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold nav-cta">Book a Strategy Call</a>
+      <a href={bookHref} class="btn-gold nav-cta">Book a Strategy Call</a>
       <button class="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" id="hamburger">
         <span></span><span></span><span></span>
       </button>
@@ -208,7 +212,7 @@ const navLocations = await sanityFetch<{city: string; state: string; slug: {curr
       <a href="/#about">About</a>
       <a href="/blog">Blog</a>
     </nav>
-    <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold">Book a Strategy Call</a>
+    <a href={bookHref} class="btn-gold">Book a Strategy Call</a>
   </div>
 
   <slot />
@@ -262,7 +266,7 @@ const navLocations = await sanityFetch<{city: string; state: string; slug: {curr
           <ul>
             <li><a href="tel:+19122315182">(912) 231-5182</a></li>
             <li><a href="mailto:Support@HighTideMarketing.com">Support@HighTideMarketing.com</a></li>
-            <li><a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer">Book a Strategy Call</a></li>
+            <li><a href={bookHref}>Book a Strategy Call</a></li>
           </ul>
         </div>
       </div>

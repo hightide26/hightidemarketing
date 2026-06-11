@@ -69,12 +69,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
   });
 
-  /* ── MEGA MENU — Services ── */
-  const megaWrap = document.getElementById('nav-mega-services');
-  if (megaWrap) {
+  /* ── MEGA MENUS — Services + Locations ── */
+  const megaWraps = document.querySelectorAll('.nav-mega-wrap');
+
+  function closeAllMega() {
+    megaWraps.forEach((w) => {
+      w.classList.remove('is-open');
+      const b = w.querySelector('.nav-mega-btn');
+      if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  megaWraps.forEach((megaWrap) => {
     const megaTrigger = megaWrap.querySelector('.nav-mega-btn');
+    if (!megaTrigger) return;
 
     function openMega() {
+      closeAllMega(); // close any sibling menu first
       megaWrap.classList.add('is-open');
       megaTrigger.setAttribute('aria-expanded', 'true');
     }
@@ -92,16 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleMega();
     });
 
-    // Close when clicking anywhere outside the mega wrap
-    document.addEventListener('click', () => closeMega());
-
     // Prevent clicks inside the panel from closing it
     megaWrap.addEventListener('click', (e) => e.stopPropagation());
-
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMega();
-    });
 
     // Close on any link inside mega (navigating away)
     megaWrap.querySelectorAll('a').forEach(a => {
@@ -109,8 +112,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Close if mobile menu opens
-    hamburger.addEventListener('click', closeMega);
-  }
+    if (hamburger) hamburger.addEventListener('click', closeMega);
+  });
+
+  // Close all when clicking outside or pressing Escape
+  document.addEventListener('click', closeAllMega);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllMega();
+  });
 
   /* ── SCROLL REVEAL (CSS-driven via IntersectionObserver) ── */
   const revealObs = new IntersectionObserver((entries) => {

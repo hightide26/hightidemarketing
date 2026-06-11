@@ -1,14 +1,20 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import ServiceHero from '../../components/ServiceHero.astro';
-import { sanityFetch } from '../../lib/sanity';
+// ════════════════════════════════════════════════════════════════════════════
+// ROOT-LEVEL LOCAL SERVICE PAGES
+// Renders `localServicePage` documents at keyword-style root slugs, e.g.
+// /social-media-marketing-savannah-ga
+// Mirrors the /services/[slug] template, wrapped in the shared Layout (so it
+// gets the full nav + footer), with an on-page booking embed in the final CTA.
+// ════════════════════════════════════════════════════════════════════════════
+import Layout from '../layouts/Layout.astro';
+import ServiceHero from '../components/ServiceHero.astro';
+import { sanityFetch } from '../lib/sanity';
 
 const { slug } = Astro.params;
 
-// ── GROQ — fetch full service page ────────────────────────────────────────
 const page = await sanityFetch<any>(`
-  *[_type == "servicePage" && slug.current == $slug][0]{
-    title, slug, hubDescription,
+  *[_type == "localServicePage" && slug.current == $slug][0]{
+    title, service, city, state, slug,
     hero,
     platformsHeading, platforms,
     philosophySection,
@@ -27,33 +33,38 @@ const page = await sanityFetch<any>(`
   }
 `, { slug });
 
-if (!page) return Astro.redirect('/services', 302);
+// Unknown root slug → real 404 (keeps /privacy, /terms, etc. as 404s).
+if (!page) {
+  return new Response('Not Found', { status: 404, headers: { 'content-type': 'text/plain' } });
+}
 
-const metaTitle = page.seo?.metaTitle || `${page.title} | High Tide Marketing`;
+const cityState = [page.city, page.state].filter(Boolean).join(', ');
+const metaTitle = page.seo?.metaTitle || `${page.service} in ${cityState} | High Tide Marketing`;
 const metaDesc  = page.seo?.metaDescription || page.hero?.subheadline || '';
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-// *word* → <em>word</em>
+const DEFAULT_BOOKING = 'https://api.leadconnectorhq.com/widget/booking/ZVd5T6AF0kg90QYwj8jJ';
+const bookingUrl = page.finalCta?.bookingEmbedUrl || DEFAULT_BOOKING;
+const trustPoints = page.finalCta?.trustPoints?.length
+  ? page.finalCta.trustPoints
+  : ['No long-term contracts', 'You own everything we build', 'Full transparency, real-time reporting'];
+
+// ── Helpers ──────────────────────────────────────────────────────────────
 function parseEm(str: string = '') {
   return str.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
 
-// Normalize an asset path so relative CMS paths (e.g. "assets/videos/x.mp4")
-// don't break on nested routes. Leaves absolute URLs untouched.
+// Normalize an asset path so relative CMS paths don't break on nested routes.
 function assetUrl(src: string = '') {
   if (!src) return src;
   if (/^https?:\/\//.test(src)) return src;
   return src.startsWith('/') ? src : '/' + src;
 }
 
-// Icon map — returns SVG inner path string by key
 const ICONS: Record<string, string> = {
-  // Hero stat icons
   eye:      '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
   video:    '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
   users:    '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
   facebook: '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
-  // Capability icons
   calendar:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
   'video-sm':   '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
   grid:         '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
@@ -63,14 +74,11 @@ const ICONS: Record<string, string> = {
   chat:         '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
   chart:        '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
   'calendar-cta': '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-  // Philosophy benefit icons
   trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
   plus:       '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
   'bar-chart':'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
-  // Why HTM icons
   target:      '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   'bar-chart-2':'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
-  // Platform icons (looked up by name)
   platform_facebook:       '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
   platform_instagram:      '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>',
   platform_tiktok:         '<path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/>',
@@ -83,13 +91,11 @@ const ICONS: Record<string, string> = {
 function iconFor(key: string): string {
   return ICONS[key] || ICONS['activity'];
 }
-
 function platformIconFor(name: string): string {
   const k = 'platform_' + (name || '').toLowerCase().replace(/\s+/g, '_');
   return ICONS[k] || ICONS['platform_default'];
 }
 
-// Build hero stats for ServiceHero component — convert iconKey → iconPath
 const heroStats = (page.hero?.stats || []).map((s: any) => ({
   value: s.value,
   label: s.label,
@@ -98,25 +104,23 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
 }));
 ---
 
-<Layout title={metaTitle} description={metaDesc} canonicalPath={`/services/${slug}`}>
+<Layout title={metaTitle} description={metaDesc} canonicalPath={`/${slug}`} bookHref="#book">
+  <!-- GHL booking widget script -->
+  <script src="https://link.msgsndr.com/js/form_embed.js" async></script>
 <main>
 
-  <!-- ══════════════════════════════════════════
-       HERO — ServiceHero component
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ HERO ══════════════ -->
   <ServiceHero
-    eyebrow={page.hero?.eyebrow || page.title}
-    headline={page.hero?.headline || page.title}
+    eyebrow={page.hero?.eyebrow || `${page.service} · ${cityState}`}
+    headline={page.hero?.headline || `${page.service} in ${page.city}`}
     sub={page.hero?.subheadline || ''}
-    watermark={page.hero?.watermark || page.title}
+    watermark={page.hero?.watermark || (page.city || '').toUpperCase()}
     stats={heroStats}
-    ctaLabel={page.hero?.ctaLabel}
-    ctaHref={page.hero?.ctaHref}
+    ctaLabel={page.hero?.ctaLabel || 'Book Your Free Strategy Call →'}
+    ctaHref="#book"
   />
 
-  <!-- ══════════════════════════════════════════
-       PLATFORM STRIP
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ PLATFORM STRIP ══════════════ -->
   {page.platforms?.length > 0 && (
     <section class="sm-platforms" aria-label="Platforms we manage">
       <h2 class="sm-platforms-heading">{page.platformsHeading || 'Grow on the platforms that matter.'}</h2>
@@ -137,14 +141,11 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       PHILOSOPHY
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ PHILOSOPHY ══════════════ -->
   {page.philosophySection?.heading && (
     <section class="sm-philosophy" aria-labelledby="philosophy-heading">
       <div class="section-inner">
         <div class="sm-philosophy-grid">
-
           <div class="sm-philosophy-content">
             {page.philosophySection.tag && <span class="tag">{page.philosophySection.tag}</span>}
             <h2 id="philosophy-heading" set:html={parseEm(page.philosophySection.heading || '').replace(/\n/g, '<br>')}></h2>
@@ -152,7 +153,6 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
               <p set:html={para.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}></p>
             ))}
           </div>
-
           <div class="sm-philosophy-benefits">
             {(page.philosophySection.statValue || page.philosophySection.statLabel) && (
               <div class="sm-philosophy-stat">
@@ -160,7 +160,6 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
                 {page.philosophySection.statLabel && <span class="sm-philosophy-stat-label">{page.philosophySection.statLabel}</span>}
               </div>
             )}
-
             {page.philosophySection.benefits?.length > 0 && (
               <ul class="sm-philosophy-list">
                 {page.philosophySection.benefits.map((b: any) => (
@@ -179,15 +178,12 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
               </ul>
             )}
           </div>
-
         </div>
       </div>
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       PROBLEM — BENTO CARD GRID
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ PROBLEM — BENTO GRID ══════════════ -->
   {page.problemSection?.cards?.length > 0 && (
     <section class="sm-compare" aria-labelledby="compare-heading">
       <div class="section-inner">
@@ -196,7 +192,6 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
           <h2 id="compare-heading" set:html={parseEm(page.problemSection.heading || '')}></h2>
           {page.problemSection.sub && <p class="section-sub">{page.problemSection.sub}</p>}
         </div>
-
         <div class="sm-problem-grid">
           {page.problemSection.cards.map((card: any) => (
             <div class={`sm-problem-card${card.featured ? ' sm-problem-card--featured' : ''} reveal`}>
@@ -216,7 +211,6 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
             </div>
           ))}
         </div>
-
         {(page.problemSection.solutionLabel || page.problemSection.solutionItems?.length > 0) && (
           <div class="sm-solution-strip">
             {page.problemSection.solutionLabel && (
@@ -240,9 +234,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       WHY HTM — HIGH TIDE RADAR
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ WHY HTM — HIGH TIDE RADAR ══════════════ -->
   {page.whyHtm?.heading && (
     <section class="sm-why" aria-labelledby="why-heading">
       <div class="section-inner">
@@ -280,9 +272,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       WHAT'S INCLUDED — CAPABILITIES
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ WHAT'S INCLUDED — CAPABILITIES ══════════════ -->
   {page.capabilities?.length > 0 && (
     <section class="sm-caps" aria-labelledby="caps-heading">
       <div class="section-inner">
@@ -301,7 +291,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
               <h3>{cap.title}</h3>
               <p>{cap.description}</p>
               {cap.isCta && cap.ctaLabel && (
-                <a href={cap.ctaHref || '/contact'} class="sm-cap-cta-btn">{cap.ctaLabel}</a>
+                <a href={cap.ctaHref || '#book'} class="sm-cap-cta-btn">{cap.ctaLabel}</a>
               )}
             </div>
           ))}
@@ -310,9 +300,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       WORK SAMPLES
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ WORK SAMPLES ══════════════ -->
   {page.workSamples?.items?.length > 0 && (
     <section class="sm-work" aria-labelledby="work-heading">
       <div class="section-inner">
@@ -350,9 +338,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       REAL RESULTS — STATS
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ REAL RESULTS — STATS ══════════════ -->
   {page.resultsSection?.stats?.length > 0 && (
     <section class="sm-results" aria-labelledby="results-heading">
       <div class="section-inner">
@@ -374,9 +360,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       PACKAGES
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ PACKAGES ══════════════ -->
   {page.tiers?.length > 0 && (
     <section class="sm-tiers" aria-labelledby="tiers-heading">
       <div class="section-inner">
@@ -395,9 +379,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
                 <div class="smp-name">{tier.name}</div>
                 {tier.tagline && <p class="smp-desc">{tier.tagline}</p>}
                 <a
-                  href={tier.ctaHref || 'https://calendly.com/hightidemarketing/strategy-call'}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={tier.ctaHref || '#book'}
                   class={`smp-cta${tier.featured ? ' smp-cta--solid' : ' smp-cta--outline'}`}
                 >
                   {tier.ctaLabel || 'Schedule a Call for Pricing →'}
@@ -425,9 +407,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       TESTIMONIALS
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ TESTIMONIALS ══════════════ -->
   {page.testimonials?.length > 0 && (
     <section class="testi" aria-labelledby="testi-heading">
       <div class="section-inner">
@@ -456,9 +436,7 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       FAQ
-  ══════════════════════════════════════════ -->
+  <!-- ══════════════ FAQ ══════════════ -->
   {page.faq?.length > 0 && (
     <section class="faq" aria-labelledby="faq-heading">
       <div class="section-inner">
@@ -466,9 +444,9 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
           <div class="faq-left">
             <span class="tag">FAQ</span>
             <h2 id="faq-heading" class="faq-left h2">
-              {page.faqHeading || `Questions About ${page.title}`}
+              {page.faqHeading || `${page.service} in ${page.city} — FAQ`}
             </h2>
-            <p>Don't see your question? <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" style="color:var(--sky-dark);font-weight:600;">Book a call</a> and we'll walk you through it.</p>
+            <p>Don't see your question? <a href="#book" style="color:var(--sky-dark);font-weight:600;">Book a call</a> and we'll walk you through it.</p>
           </div>
           <div class="faq-items">
             {page.faq.map((item: any) => (
@@ -483,29 +461,32 @@ const heroStats = (page.hero?.stats || []).map((s: any) => ({
     </section>
   )}
 
-  <!-- ══════════════════════════════════════════
-       FINAL CTA — always shown
-  ══════════════════════════════════════════ -->
-  <section class="final-cta" aria-labelledby="cta-heading">
+  <!-- ══════════════ FINAL CTA — booking embed ══════════════ -->
+  <section class="final-cta" id="book" aria-labelledby="cta-heading">
     <div class="section-inner">
       <div class="final-cta-layout">
-        <div class="final-cta-content">
+        <div class="final-cta-content reveal">
           <span class="tag">{page.finalCta?.tag || 'Ready to Start?'}</span>
-          <h2 id="cta-heading" set:html={parseEm(page.finalCta?.heading || `Let's Put ${page.title} to Work for *Your Business.*`)}></h2>
-          <p>{page.finalCta?.sub || "Book a free 30-minute strategy call. We'll audit your current marketing, identify the gaps, and show you exactly what we'd do differently — no pitch deck, no pressure."}</p>
-          <div class="final-cta-actions">
-            <a
-              href={page.finalCta?.primaryHref || 'https://calendly.com/hightidemarketing/strategy-call'}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-gold"
-            >
-              {page.finalCta?.primaryLabel || 'Book Your Free Strategy Call →'}
-            </a>
-            <a href={page.finalCta?.secondaryHref || '/services'} class="btn-ghost">
-              {page.finalCta?.secondaryLabel || 'See All Services'}
-            </a>
-          </div>
+          <h2 id="cta-heading" set:html={parseEm(page.finalCta?.heading || `Let's Grow Your ${page.city} Business.`)}></h2>
+          <p>{page.finalCta?.sub || `Book a free 30-minute strategy call. We'll audit your current ${page.service.toLowerCase()} presence in ${page.city}, show you exactly where the opportunity is, and what we'd do differently — no pitch deck, no pressure.`}</p>
+          {trustPoints.length > 0 && (
+            <ul class="final-cta-trust">
+              {trustPoints.map((point: string) => (
+                <li>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div class="final-cta-form reveal d2">
+          <iframe
+            src={bookingUrl}
+            style="width:100%;border:none;overflow:hidden;"
+            scrolling="no"
+            title={`Book a strategy call — ${page.service} in ${cityState}`}
+          ></iframe>
         </div>
       </div>
     </div>
