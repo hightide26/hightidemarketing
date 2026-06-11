@@ -5,6 +5,9 @@ import { sanityFetch } from '../../lib/sanity';
 
 const { slug } = Astro.params;
 
+// Sanity slugs store the full path (e.g. "services/video") for clarity in Studio
+const fullSlug = `services/${slug}`;
+
 // ── GROQ — fetch full service page ────────────────────────────────────────
 const page = await sanityFetch<any>(`
   *[_type == "servicePage" && slug.current == $slug][0]{
@@ -25,7 +28,7 @@ const page = await sanityFetch<any>(`
     finalCta,
     seo
   }
-`, { slug });
+`, { slug: fullSlug });
 
 if (!page) return Astro.redirect('/services', 302);
 
