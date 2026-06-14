@@ -6,7 +6,7 @@ export const GET: APIRoute = async () => {
   const now = new Date().toISOString().split('T')[0];
 
   // Fetch all dynamic content from Sanity
-  const [services, locations, localPages] = await Promise.all([
+  const [services, locations, localPages, caseStudies] = await Promise.all([
     sanityFetch<{ slug: string }[]>(
       `*[_type == "servicePage"]{ "slug": slug.current }`,
       {}
@@ -19,6 +19,10 @@ export const GET: APIRoute = async () => {
       `*[_type == "localServicePage"]{ "slug": slug.current }`,
       {}
     ),
+    sanityFetch<{ slug: string }[]>(
+      `*[_type == "caseStudy"]{ "slug": slug.current }`,
+      {}
+    ),
   ]);
 
   // Static pages
@@ -26,6 +30,7 @@ export const GET: APIRoute = async () => {
     { loc: base, priority: '1.0', changefreq: 'weekly' },
     { loc: `${base}/services`, priority: '0.9', changefreq: 'weekly' },
     { loc: `${base}/locations`, priority: '0.8', changefreq: 'weekly' },
+    { loc: `${base}/work`, priority: '0.8', changefreq: 'weekly' },
     { loc: `${base}/blog`, priority: '0.7', changefreq: 'weekly' },
     { loc: `${base}/privacy`, priority: '0.3', changefreq: 'yearly' },
     { loc: `${base}/terms`, priority: '0.3', changefreq: 'yearly' },
@@ -52,7 +57,14 @@ export const GET: APIRoute = async () => {
     changefreq: 'monthly',
   }));
 
-  const allUrls = [...staticUrls, ...serviceUrls, ...locationUrls, ...localUrls];
+  // Case study pages
+  const caseStudyUrls = (caseStudies ?? []).map(({ slug }) => ({
+    loc: `${base}/work/${slug}`,
+    priority: '0.7',
+    changefreq: 'monthly',
+  }));
+
+  const allUrls = [...staticUrls, ...serviceUrls, ...locationUrls, ...localUrls, ...caseStudyUrls];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

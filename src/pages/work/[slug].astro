@@ -1,0 +1,459 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityFetch } from '../../lib/sanity';
+
+const { slug } = Astro.params;
+
+const page = await sanityFetch<any>(`
+  *[_type == "caseStudy" && slug.current == $slug][0]{
+    clientName, slug, industry, clientWebsite,
+    hero, topMetrics, projectMeta,
+    challenge, solution, beforeAfter, resultsSection,
+    testimonialQuote, finalCta, seo
+  }
+`, { slug });
+
+if (!page) return new Response('Not Found', { status: 404 });
+
+const metaTitle = page.seo?.metaTitle || `${page.clientName} Case Study | High Tide Marketing`;
+const metaDesc  = page.seo?.metaDescription || page.hero?.subheadline || '';
+
+// *word* → <em>word</em> (em renders sky-blue, not italic, per the design system)
+function parseEm(str: string = '') {
+  return str.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+// Normalize relative CMS asset paths so they don't break on nested routes.
+function assetUrl(src: string = '') {
+  if (!src) return src;
+  if (/^https?:\/\//.test(src)) return src;
+  return src.startsWith('/') ? src : '/' + src;
+}
+const isExternal = (href: string = '') => /^https?:\/\//.test(href);
+
+// Icon library for the "work" cards
+const ICONS: Record<string, string> = {
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  browser: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="8" x2="22" y2="8"/><circle cx="5.5" cy="5.5" r="0.6" fill="currentColor"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  redirect: '<polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 014-4h12"/>',
+  link: '<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>',
+};
+const iconFor = (key: string = '') =>
+  `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[key] || ICONS.shield}</svg>`;
+
+const t = page.testimonialQuote;
+const hasTestimonial = t && t.quote;
+---
+<Layout title={metaTitle} description={metaDesc} canonicalPath={`/work/${slug}`}>
+<main class="cs">
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <section class="cs-hero">
+    <div class="section-inner">
+      <a href="/work" class="cs-back">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        All Case Studies
+      </a>
+      {page.hero?.eyebrow && <span class="tag cs-tag-dark">{page.hero.eyebrow}</span>}
+      <h1 set:html={parseEm(page.hero?.headline)} />
+      {page.hero?.subheadline && <p class="cs-hero-sub">{page.hero.subheadline}</p>}
+      {page.hero?.ctaLabel && (
+        <a href={page.hero.ctaHref || '#'} class="btn-hero cs-hero-cta"
+           {...(isExternal(page.hero.ctaHref) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+          {page.hero.ctaLabel}
+        </a>
+      )}
+      {page.hero?.afterImage && (
+        <div class="cs-hero-media reveal">
+          <img src={assetUrl(page.hero.afterImage)} alt={page.hero.afterImageAlt || page.clientName} loading="eager" decoding="async" />
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- ══════════════ TOP METRICS ══════════════ -->
+  {page.topMetrics?.length > 0 && (
+    <section class="cs-metrics">
+      <div class="section-inner">
+        <div class="cs-metrics-grid">
+          {page.topMetrics.map((m: any) => (
+            <div class="cs-metric reveal">
+              <div class="cs-metric-val">{m.value}</div>
+              <div class="cs-metric-label">{m.label}</div>
+              {m.sub && <div class="cs-metric-sub">{m.sub}</div>}
+            </div>
+          ))}
+        </div>
+        {page.clientWebsite && (
+          <a class="cs-visit" href={page.clientWebsite} target="_blank" rel="noopener noreferrer">
+            Visit {page.clientWebsite.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ PROJECT INFO ══════════════ -->
+  {page.projectMeta && (
+    <section class="cs-meta-section">
+      <div class="section-inner cs-meta-grid">
+        <div class="cs-meta-facts">
+          <div class="cs-meta-row"><span class="cs-meta-label">Client</span><span class="cs-meta-value">{page.clientName}</span></div>
+          {page.industry && <div class="cs-meta-row"><span class="cs-meta-label">Industry</span><span class="cs-meta-value">{page.industry}</span></div>}
+          {page.projectMeta.audience && <div class="cs-meta-row"><span class="cs-meta-label">Audience</span><span class="cs-meta-value">{page.projectMeta.audience}</span></div>}
+          {page.projectMeta.year && <div class="cs-meta-row"><span class="cs-meta-label">Year</span><span class="cs-meta-value">{page.projectMeta.year}</span></div>}
+          {page.projectMeta.services?.length > 0 && (
+            <div class="cs-meta-row cs-meta-row--tags">
+              <span class="cs-meta-label">Services</span>
+              <span class="cs-meta-tags">
+                {page.projectMeta.services.map((s: string) => <span class="cs-svc-tag">{s}</span>)}
+              </span>
+            </div>
+          )}
+        </div>
+        <div class="cs-meta-copy">
+          {page.projectMeta.paragraphs?.map((p: string) => <p>{p}</p>)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ CHALLENGE ══════════════ -->
+  {page.challenge && (
+    <section class="cs-challenge">
+      <div class="section-inner">
+        <div class="cs-section-head">
+          {page.challenge.tag && <span class="tag">{page.challenge.tag}</span>}
+          <h2 set:html={parseEm(page.challenge.heading)} />
+          {page.challenge.intro && <p class="cs-lead">{page.challenge.intro}</p>}
+        </div>
+        <div class="cs-challenge-grid">
+          {page.challenge.perfBullets?.length > 0 && (
+            <div class="cs-prob-col">
+              {page.challenge.perfLabel && <h3 class="cs-prob-label">{page.challenge.perfLabel}</h3>}
+              <ul class="cs-arrow-list">
+                {page.challenge.perfBullets.map((b: string) => <li set:html={parseEm(b)} />)}
+              </ul>
+            </div>
+          )}
+          {page.challenge.visBullets?.length > 0 && (
+            <div class="cs-prob-col">
+              {page.challenge.visLabel && <h3 class="cs-prob-label">{page.challenge.visLabel}</h3>}
+              <ul class="cs-arrow-list">
+                {page.challenge.visBullets.map((b: string) => <li set:html={parseEm(b)} />)}
+              </ul>
+            </div>
+          )}
+        </div>
+        {page.challenge.beforeImage && (
+          <figure class="cs-figure reveal">
+            <img src={assetUrl(page.challenge.beforeImage)} alt="Performance report before the rebuild" loading="lazy" decoding="async" />
+            {page.challenge.beforeCaption && <figcaption>{page.challenge.beforeCaption}</figcaption>}
+          </figure>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ THE WORK ══════════════ -->
+  {page.solution?.cards?.length > 0 && (
+    <section class="cs-work">
+      <div class="section-inner">
+        <div class="cs-section-head cs-section-head--dark">
+          {page.solution.tag && <span class="tag cs-tag-dark">{page.solution.tag}</span>}
+          <h2 set:html={parseEm(page.solution.heading)} />
+        </div>
+        <div class="cs-work-grid">
+          {page.solution.cards.map((c: any) => (
+            <div class="cs-work-card reveal">
+              <div class="cs-work-icon" set:html={iconFor(c.iconKey)} />
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ BEFORE / AFTER ══════════════ -->
+  {page.beforeAfter && (
+    <section class="cs-ba">
+      <div class="section-inner">
+        <div class="cs-section-head">
+          {page.beforeAfter.tag && <span class="tag">{page.beforeAfter.tag}</span>}
+          <h2 set:html={parseEm(page.beforeAfter.heading)} />
+          {page.beforeAfter.lead && <p class="cs-lead">{page.beforeAfter.lead}</p>}
+        </div>
+        <div class="cs-ba-grid">
+          <div class="cs-ba-col">
+            <span class="cs-ba-flag cs-ba-flag--before">Before</span>
+            {page.beforeAfter.beforeImages?.map((img: any) => (
+              <figure class="cs-figure reveal">
+                <img src={assetUrl(img.src)} alt={img.caption || 'Before'} loading="lazy" decoding="async" />
+                {img.caption && <figcaption>{img.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+          <div class="cs-ba-col">
+            <span class="cs-ba-flag cs-ba-flag--after">After</span>
+            {page.beforeAfter.afterImage && (
+              <figure class="cs-figure cs-figure--after reveal">
+                <img src={assetUrl(page.beforeAfter.afterImage)} alt={page.beforeAfter.afterCaption || 'After'} loading="lazy" decoding="async" />
+                {page.beforeAfter.afterCaption && <figcaption>{page.beforeAfter.afterCaption}</figcaption>}
+              </figure>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ RESULTS ══════════════ -->
+  {page.resultsSection && (
+    <section class="cs-results">
+      <div class="section-inner">
+        <div class="cs-section-head cs-section-head--dark">
+          {page.resultsSection.tag && <span class="tag cs-tag-dark">{page.resultsSection.tag}</span>}
+          <h2 set:html={parseEm(page.resultsSection.heading)} />
+        </div>
+        {page.resultsSection.stats?.length > 0 && (
+          <div class="cs-results-grid">
+            {page.resultsSection.stats.map((s: any) => (
+              <div class="cs-result-stat reveal">
+                <div class="cs-result-val">{s.value}</div>
+                <div class="cs-result-label">{s.label}</div>
+                {s.sub && <div class="cs-result-sub">{s.sub}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+        {page.resultsSection.bullets?.length > 0 && (
+          <ul class="cs-check-list">
+            {page.resultsSection.bullets.map((b: string) => (
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span set:html={parseEm(b)} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ TESTIMONIAL ══════════════ -->
+  {hasTestimonial && (
+    <section class="cs-quote-section">
+      <div class="section-inner">
+        <blockquote class="cs-quote">
+          <svg class="cs-quote-mark" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 8c-2.5 0-4.5 2-4.5 4.5S7 17 9.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6v2.5c4.3-.5 7.5-3.8 7.5-8.5V8H9.5zm9 0c-2.5 0-4.5 2-4.5 4.5S16 17 18.5 17c.3 0 .6 0 .9-.1-.6 1.3-2 2.3-3.9 2.6v2.5c4.3-.5 7.5-3.8 7.5-8.5V8h-4.5z"/></svg>
+          <p>{t.quote}</p>
+          <footer>
+            <span class="cs-quote-name">{t.authorName}</span>
+            {(t.authorRole || t.authorCompany) && (
+              <span class="cs-quote-role">{[t.authorRole, t.authorCompany].filter(Boolean).join(', ')}</span>
+            )}
+          </footer>
+        </blockquote>
+      </div>
+    </section>
+  )}
+
+  <!-- ══════════════ FINAL CTA ══════════════ -->
+  {page.finalCta && (
+    <section class="cs-cta">
+      <div class="section-inner" style="text-align:center;">
+        {page.finalCta.tag && <span class="tag cs-tag-dark">{page.finalCta.tag}</span>}
+        <h2 set:html={parseEm(page.finalCta.heading)} />
+        {page.finalCta.sub && <p class="cs-cta-sub">{page.finalCta.sub}</p>}
+        {page.finalCta.ctaLabel && (
+          <a href={page.finalCta.ctaHref || '#'} class="btn-gold cs-cta-btn"
+             {...(isExternal(page.finalCta.ctaHref) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+            {page.finalCta.ctaLabel}
+          </a>
+        )}
+      </div>
+    </section>
+  )}
+
+</main>
+</Layout>
+
+<style>
+  .cs { background: var(--bg); }
+  .cs h1, .cs h2, .cs h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .cs em { color: var(--sky); font-style: normal; }
+
+  /* Shared dark-tag override */
+  .cs-tag-dark { background: rgba(91,196,232,0.15); color: var(--sky); border-color: rgba(91,196,232,0.28); }
+
+  /* Section headers */
+  .cs-section-head { max-width: 760px; margin: 0 auto 56px; text-align: center; }
+  .cs-section-head h2 { font-size: clamp(28px, 3.6vw, 46px); font-weight: 800; color: var(--navy); line-height: 1.12; margin: 16px 0 0; }
+  .cs-section-head--dark h2 { color: #fff; }
+  .cs-lead { font-size: 17px; line-height: 1.7; color: var(--text-muted); margin: 18px auto 0; max-width: 640px; }
+  .cs-section-head--dark .cs-lead { color: rgba(255,255,255,0.65); }
+
+  /* ── HERO ── */
+  .cs-hero {
+    background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 58%, #0d3350 100%);
+    padding: 120px var(--px) 0;
+    text-align: center;
+  }
+  .cs-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6);
+    text-decoration: none; margin-bottom: 28px; transition: color 0.2s, gap 0.2s;
+  }
+  .cs-back:hover { color: var(--sky); gap: 9px; }
+  .cs-hero .tag { margin-bottom: 20px; }
+  .cs-hero h1 {
+    font-size: clamp(34px, 5.2vw, 64px); font-weight: 800; color: #fff;
+    line-height: 1.08; letter-spacing: -0.02em; max-width: 920px; margin: 0 auto;
+  }
+  .cs-hero-sub {
+    font-size: 18px; line-height: 1.7; color: rgba(255,255,255,0.66);
+    max-width: 680px; margin: 24px auto 0;
+  }
+  .cs-hero-cta { margin-top: 32px; }
+  .cs-hero-media {
+    max-width: 1000px; margin: 56px auto -80px;
+    border-radius: var(--radius-xl); overflow: hidden;
+    box-shadow: 0 40px 90px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.08);
+  }
+  .cs-hero-media img { width: 100%; display: block; }
+
+  /* ── TOP METRICS ── */
+  .cs-metrics { background: var(--navy-deep); padding: 120px var(--px) 84px; }
+  .cs-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1000px; margin: 0 auto; }
+  .cs-metric {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: var(--radius-lg); padding: 32px 28px; text-align: center;
+    backdrop-filter: blur(8px);
+  }
+  .cs-metric-val { font-family: 'JetBrains Mono', monospace; font-size: clamp(38px, 5vw, 54px); font-weight: 700; color: var(--sky); line-height: 1; }
+  .cs-metric-label { font-size: 15px; font-weight: 600; color: #fff; margin-top: 14px; }
+  .cs-metric-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; line-height: 1.5; }
+  .cs-visit {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin: 36px auto 0; font-size: 14px; font-weight: 600; color: var(--sky); text-decoration: none;
+    transition: gap 0.2s;
+  }
+  .cs-visit:hover { gap: 10px; }
+
+  /* ── PROJECT INFO ── */
+  .cs-meta-section { background: var(--bg); padding: 96px var(--px); }
+  .cs-meta-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: start; }
+  .cs-meta-row { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .cs-meta-row--tags { align-items: flex-start; }
+  .cs-meta-label {
+    flex: 0 0 96px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--sky-dark); padding-top: 3px;
+  }
+  .cs-meta-value { font-size: 15px; color: var(--text-body); font-weight: 500; }
+  .cs-meta-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cs-svc-tag {
+    font-size: 12.5px; font-weight: 600; color: var(--navy);
+    background: var(--sky-light); border: 1px solid rgba(91,196,232,0.3);
+    padding: 5px 12px; border-radius: 20px;
+  }
+  .cs-meta-copy p { font-size: 17px; line-height: 1.8; color: var(--text-body); margin: 0 0 20px; }
+  .cs-meta-copy p:last-child { margin-bottom: 0; }
+
+  /* ── CHALLENGE ── */
+  .cs-challenge { background: var(--bg-alt); padding: 96px var(--px); }
+  .cs-challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 980px; margin: 0 auto; }
+  .cs-prob-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 18px; }
+  .cs-arrow-list { list-style: none; padding: 0; margin: 0; }
+  .cs-arrow-list li {
+    position: relative; padding: 0 0 16px 30px; font-size: 15.5px; line-height: 1.6; color: var(--text-body);
+  }
+  .cs-arrow-list li::before {
+    content: '→'; position: absolute; left: 0; top: 0; color: var(--sky); font-weight: 700;
+  }
+  .cs-arrow-list em { color: var(--navy); font-weight: 700; }
+  .cs-figure {
+    margin: 56px auto 0; max-width: 900px;
+    border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border);
+    box-shadow: var(--shadow-md); background: #fff;
+  }
+  .cs-figure img { width: 100%; display: block; }
+  .cs-figure figcaption {
+    font-size: 13px; color: var(--text-faint); text-align: center;
+    padding: 14px 16px; background: #fff; border-top: 1px solid var(--border);
+  }
+
+  /* ── THE WORK ── */
+  .cs-work { background: var(--navy-deep); padding: 110px var(--px); }
+  .cs-work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 980px; margin: 0 auto; }
+  .cs-work-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: var(--radius-lg); padding: 32px 28px;
+  }
+  .cs-work-icon {
+    width: 52px; height: 52px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
+    color: var(--sky); background: rgba(91,196,232,0.12); border: 1px solid rgba(91,196,232,0.22); margin-bottom: 20px;
+  }
+  .cs-work-card h3 { font-size: 19px; font-weight: 700; color: #fff; margin: 0 0 10px; }
+  .cs-work-card p { font-size: 14.5px; line-height: 1.65; color: rgba(255,255,255,0.62); margin: 0; }
+
+  /* ── BEFORE / AFTER ── */
+  .cs-ba { background: var(--bg-alt); padding: 96px var(--px); }
+  .cs-ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1080px; margin: 0 auto; align-items: start; }
+  .cs-ba-col { display: flex; flex-direction: column; gap: 24px; }
+  .cs-ba-flag {
+    align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px;
+  }
+  .cs-ba-flag--before { color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; }
+  .cs-ba-flag--after { color: var(--navy); background: var(--gold-light); border: 1px solid rgba(240,192,64,0.4); }
+  .cs-ba .cs-figure { margin: 0; }
+  .cs-figure--after { position: sticky; top: 100px; }
+
+  /* ── RESULTS ── */
+  .cs-results { background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%); padding: 110px var(--px); }
+  .cs-results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; max-width: 1040px; margin: 0 auto 48px; }
+  .cs-result-stat { text-align: center; padding: 28px 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: var(--radius-lg); }
+  .cs-result-val { font-family: 'JetBrains Mono', monospace; font-size: clamp(30px, 3.6vw, 42px); font-weight: 700; color: var(--gold); line-height: 1; }
+  .cs-result-label { font-size: 14px; font-weight: 600; color: #fff; margin-top: 12px; line-height: 1.35; }
+  .cs-result-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .cs-check-list { list-style: none; padding: 0; margin: 0 auto; max-width: 760px; }
+  .cs-check-list li { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.82); border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .cs-check-list li:last-child { border-bottom: none; }
+  .cs-check-list svg { color: var(--sky); flex-shrink: 0; margin-top: 2px; }
+  .cs-check-list em { color: #fff; font-weight: 700; }
+
+  /* ── TESTIMONIAL ── */
+  .cs-quote-section { background: var(--bg); padding: 100px var(--px); }
+  .cs-quote { max-width: 760px; margin: 0 auto; text-align: center; }
+  .cs-quote-mark { color: var(--sky-light); margin-bottom: 8px; }
+  .cs-quote p { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 2.6vw, 30px); font-weight: 600; line-height: 1.45; color: var(--navy); margin: 0 0 28px; }
+  .cs-quote footer { display: flex; flex-direction: column; gap: 4px; }
+  .cs-quote-name { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .cs-quote-role { font-size: 14px; color: var(--text-muted); }
+
+  /* ── FINAL CTA ── */
+  .cs-cta { background: var(--navy-deep); padding: 110px var(--px); }
+  .cs-cta .tag { margin-bottom: 16px; }
+  .cs-cta h2 { font-size: clamp(30px, 4vw, 52px); font-weight: 800; color: #fff; line-height: 1.1; margin: 0 auto; max-width: 760px; }
+  .cs-cta-sub { font-size: 17px; line-height: 1.7; color: rgba(255,255,255,0.65); max-width: 580px; margin: 20px auto 0; }
+  .cs-cta-btn { margin-top: 32px; display: inline-block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .cs-meta-grid { grid-template-columns: 1fr; gap: 40px; }
+    .cs-results-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 720px) {
+    .cs-metrics-grid { grid-template-columns: 1fr; }
+    .cs-challenge-grid { grid-template-columns: 1fr; gap: 32px; }
+    .cs-work-grid { grid-template-columns: 1fr; }
+    .cs-ba-grid { grid-template-columns: 1fr; gap: 32px; }
+    .cs-figure--after { position: static; }
+    .cs-hero-media { margin-bottom: -60px; }
+  }
+  @media (max-width: 480px) {
+    .cs-results-grid { grid-template-columns: 1fr; }
+  }
+</style>

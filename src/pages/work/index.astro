@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityFetch } from '../../lib/sanity';
+
+const cases = await sanityFetch<any[]>(
+  `*[_type == "caseStudy"] | order(order asc, clientName asc){
+    clientName, slug, industry, cardImage, cardSummary, cardMetric, cardMetricLabel
+  }`,
+  {}
+);
+
+function assetUrl(src: string = '') {
+  if (!src) return src;
+  if (/^https?:\/\//.test(src)) return src;
+  return src.startsWith('/') ? src : '/' + src;
+}
+---
+<Layout
+  title="Case Studies | High Tide Marketing"
+  description="Real results for real businesses. See how High Tide Marketing rebrands, rebuilds, and grows companies with data-powered digital marketing."
+  canonicalPath="/work"
+>
+<main>
+
+  <section class="work-hero">
+    <div class="section-inner">
+      <span class="tag">Our Work</span>
+      <h1>Results We're <em>Proud Of.</em></h1>
+      <p class="work-hero-sub">We don't just make things look good — we make them perform. Here's what happens when brand, website, and search visibility all pull in the same direction.</p>
+    </div>
+  </section>
+
+  <section class="work" style="border-top:none;">
+    <div class="section-inner">
+      {cases.length > 0 ? (
+        <div class="work-grid">
+          {cases.map((cs) => (
+            <a href={`/work/${cs.slug.current}`} class="work-card">
+              <div class="work-card-img">
+                <img
+                  src={assetUrl(cs.cardImage || '/assets/images/work-contego-mockup.webp')}
+                  alt={`${cs.clientName} — case study`}
+                  width="1400" height="875" loading="lazy" decoding="async"
+                />
+                <div class="work-card-overlay"></div>
+              </div>
+              <div class="work-card-body">
+                {cs.industry && <span class="work-card-tag">{cs.industry}</span>}
+                <h3>{cs.clientName}</h3>
+                {cs.cardSummary && <p>{cs.cardSummary}</p>}
+                <span class="work-card-cta">
+                  Read case study
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+              </div>
+              {cs.cardMetric && (
+                <div class="work-card-metric">
+                  {cs.cardMetric}
+                  {cs.cardMetricLabel && <span>{cs.cardMetricLabel}</span>}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="work-empty">
+          <p>Case studies are coming soon. In the meantime, <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer">book a strategy call</a> and let's talk about your goals.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="work-cta">
+    <div class="section-inner" style="text-align:center;">
+      <span class="tag">Your Business Next?</span>
+      <h2>Let's Build Something <em>Worth Showing Off.</em></h2>
+      <p>Every result on this page started with one conversation. Let's have yours.</p>
+      <a href="https://calendly.com/hightidemarketing/strategy-call" target="_blank" rel="noopener noreferrer" class="btn-gold" style="margin-top:28px;display:inline-block;">Book a Free Strategy Call →</a>
+    </div>
+  </section>
+
+</main>
+</Layout>
+
+<style>
+  .work-hero {
+    padding: 140px var(--px) 80px;
+    background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, #0d3350 100%);
+    text-align: center;
+  }
+  .work-hero .tag { background: rgba(91,196,232,0.15); color: var(--sky); border-color: rgba(91,196,232,0.28); }
+  .work-hero h1 {
+    font-size: clamp(36px, 5.5vw, 68px); font-weight: 800; color: #fff;
+    letter-spacing: -0.03em; line-height: 1.08; margin: 20px 0 24px;
+  }
+  .work-hero h1 em { color: var(--sky); font-style: normal; }
+  .work-hero-sub { font-size: 17px; color: rgba(255,255,255,0.65); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .work { padding: 80px var(--px) 96px; }
+
+  .work-empty { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 16px; }
+  .work-empty a { color: var(--sky); font-weight: 600; }
+
+  .work-cta { padding: 80px var(--px); background: var(--surface); }
+  .work-cta .tag { margin-bottom: 12px; }
+  .work-cta h2 { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 16px; }
+  .work-cta h2 em { color: var(--sky); font-style: normal; }
+  .work-cta p { color: var(--text-muted); max-width: 520px; margin: 0 auto; line-height: 1.7; }
+</style>
